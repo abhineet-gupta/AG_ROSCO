@@ -148,9 +148,10 @@ class output_processing():
                                 unit_idx = fast_out['meta']['channels'].index(channel)
                             except:
                                 print('{} is not available as an output channel.'.format(channel))
-                        axj.set_ylabel('{:^} \n ({:^})'.format(
+                        axj.set_ylabel('{:^} '.format(
                             '\n'.join(channel_tup),
-                            fast_out['meta']['attribute_units'][unit_idx]))
+                            # fast_out['meta']['attribute_units'][unit_idx]
+                            ))
                         axj.grid(True)
                     axes[0].set_title(case)
                     
