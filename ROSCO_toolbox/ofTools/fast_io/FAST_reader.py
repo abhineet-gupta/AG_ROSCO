@@ -18,6 +18,14 @@ def readline_filterComments(f):
                         read = False
             return line
 
+def skip_comments(f):
+    ''' Skip comment lines and return next actual line ''' 
+    while True:
+        line = f.readline()
+        if line.strip()[0] != '!':
+            break
+    return line
+
 
 
 def fix_path(name):
@@ -1265,14 +1273,11 @@ class InputReader_OpenFAST(InputReader_Common):
                 n_coords = int_read(readline_filterComments(f).split()[0])
                 x = np.zeros(n_coords)
                 y = np.zeros(n_coords)
-                f.readline()
-                f.readline()
-                f.readline()
-                self.fst_vt['AeroDyn15']['ac'][afi] = float(f.readline().split()[0])
-                f.readline()
-                f.readline()
-                f.readline()
-                for j in range(n_coords - 1):
+                line = skip_comments(f)
+                self.fst_vt['AeroDyn15']['ac'][afi] = float(line.split()[0])
+                line = skip_comments(f)
+                x[0], y[0] = line.split()
+                for j in range(1,n_coords - 1):
                     x[j], y[j] = f.readline().split()
 
                 self.fst_vt['AeroDyn15']['af_coord'][afi]['x'] = x
