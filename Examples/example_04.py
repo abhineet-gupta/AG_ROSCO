@@ -23,7 +23,7 @@ from ROSCO_toolbox.inputs.validation import load_rosco_yaml
 # Load yaml file 
 this_dir = os.path.dirname(os.path.abspath(__file__))
 tune_dir =  os.path.join(this_dir,'../Tune_Cases')
-parameter_filename = os.path.join(tune_dir,'NREL5MW.yaml')
+parameter_filename = os.path.join(tune_dir,'UAE.yaml')
 inps = load_rosco_yaml(parameter_filename)
 path_params         = inps['path_params']
 turbine_params      = inps['turbine_params']
@@ -46,36 +46,36 @@ turbine.load_from_fast(
 controller.tune_controller(turbine)
 
 # Write parameter input file
-param_file = os.path.join(this_dir,'DISCON.IN')
+param_file = '/Users/dzalkind/Tools/ROSCO_QED/Test_Cases/UAE_Upwind/DISCON_ROSCO.IN'
 write_DISCON(turbine,controller,
 param_file=param_file, 
 txt_filename=cp_filename
 )
 
-# Plot gain schedule
-fig, ax = plt.subplots(2,2,constrained_layout=True,sharex=True)
-ax = ax.flatten()
-ax[0].plot(controller.v[len(controller.v_below_rated)+1:], controller.omega_pc_U)
-ax[0].set_ylabel('omega_pc')
+# # Plot gain schedule
+# fig, ax = plt.subplots(2,2,constrained_layout=True,sharex=True)
+# ax = ax.flatten()
+# ax[0].plot(controller.v[len(controller.v_below_rated)+1:], controller.omega_pc_U)
+# ax[0].set_ylabel('omega_pc')
 
-ax[1].plot(controller.v[len(controller.v_below_rated)+1:], controller.zeta_pc_U)
-ax[1].set_ylabel('zeta_pc')
+# ax[1].plot(controller.v[len(controller.v_below_rated)+1:], controller.zeta_pc_U)
+# ax[1].set_ylabel('zeta_pc')
 
-ax[2].plot(controller.v[len(controller.v_below_rated)+1:], controller.pc_gain_schedule.Kp)
-ax[2].set_xlabel('Wind Speed')
-ax[2].set_ylabel('Proportional Gain')
+# ax[2].plot(controller.v[len(controller.v_below_rated)+1:], controller.pc_gain_schedule.Kp)
+# ax[2].set_xlabel('Wind Speed')
+# ax[2].set_ylabel('Proportional Gain')
 
-ax[3].plot(controller.v[len(controller.v_below_rated)+1:], controller.pc_gain_schedule.Ki)
-ax[3].set_xlabel('Wind Speed')
-ax[3].set_ylabel('Integral Gain')
+# ax[3].plot(controller.v[len(controller.v_below_rated)+1:], controller.pc_gain_schedule.Ki)
+# ax[3].set_xlabel('Wind Speed')
+# ax[3].set_ylabel('Integral Gain')
 
-plt.suptitle('Pitch Controller Gains')
+# plt.suptitle('Pitch Controller Gains')
 
-example_out_dir = os.path.join(this_dir,'examples_out')
-if not os.path.isdir(example_out_dir):
-  os.makedirs(example_out_dir)
+# example_out_dir = os.path.join(this_dir,'examples_out')
+# if not os.path.isdir(example_out_dir):
+#   os.makedirs(example_out_dir)
 
-if False:
-  plt.show()
-else:
-  plt.savefig(os.path.join(example_out_dir,'04_GainSched.png'))
+# if False:
+#   plt.show()
+# else:
+#   plt.savefig(os.path.join(example_out_dir,'04_GainSched.png'))

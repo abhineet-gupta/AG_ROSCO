@@ -179,7 +179,7 @@ class run_FAST_ROSCO():
 if __name__ == "__main__":
 
     # Simulation config
-    sim_config = 11
+    sim_config = 12
     
     r = run_FAST_ROSCO()
 
@@ -269,6 +269,19 @@ if __name__ == "__main__":
         r.save_dir      = '/Users/dzalkind/Projects/RAAW/RAAW_OpenFAST/outputs/PS_steps'
         r.control_sweep_fcn = cl.sweep_ps_percent
         r.n_cores = 4
+
+    elif sim_config == 12:
+
+        # RAAW FAD set up
+        r.tuning_yaml   = '/Users/dzalkind/Tools/ROSCO_QED/Tune_Cases/UAE.yaml'
+        r.wind_case_fcn = cl.user_hh
+        r.wind_case_opts    = {
+            'TMax': 30.,
+            'wind_filenames': ['/Users/dzalkind/Tools/ROSCO_QED/Test_Cases/UAE_Upwind/PwrCrv.wnd']
+            }
+        r.save_dir      = '/Users/dzalkind/Tools/ROSCO_QED/outputs/UAE_setup'
+        # r.control_sweep_fcn = cl.sweep_ps_percent
+        r.n_cores = 1
 
     else:
         raise Exception('This simulation configuration is not supported.')
