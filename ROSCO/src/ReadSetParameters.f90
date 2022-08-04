@@ -744,9 +744,11 @@ CONTAINS
         ENDIF
 
         ! PC_GS_angles
-        IF (.NOT. NonDecreasing(CntrPar%PC_GS_angles)) THEN
-            ErrVar%aviFAIL = -1
-            ErrVar%ErrMsg  = 'PC_GS_angles must be non-decreasing'
+        IF (CntrPar%PC_ControlMode > 0) THEN
+            IF (.NOT. NonDecreasing(CntrPar%PC_GS_angles)) THEN
+                ErrVar%aviFAIL = -1
+                ErrVar%ErrMsg  = 'PC_GS_angles must be non-decreasing'
+            ENDIF
         ENDIF
 
         ! PC_GS_KP and PC_GS_KI
