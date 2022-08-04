@@ -74,7 +74,7 @@ def base_op_case():
     
     # DOFs
     case_inputs[("ElastoDyn","GenDOF")]      = {'vals':['True'], 'group':0} 
-    if False:
+    if True:
         case_inputs[("ElastoDyn","YawDOF")]      = {'vals':['True'], 'group':0}
         case_inputs[("ElastoDyn","FlapDOF1")]    = {'vals':['False'], 'group':0}
         case_inputs[("ElastoDyn","FlapDOF2")]    = {'vals':['False'], 'group':0}
@@ -151,8 +151,8 @@ def simp_step(**wind_case_opts):
     # Set up cases for FIW-JIP project
     # 3.x in controller tuning register
 
-    if 'T_Max' in wind_case_opts:
-        T_max = wind_case_opts['T_Max']
+    if 'T_max' in wind_case_opts:
+        T_max = wind_case_opts['T_max']
     else: #default
         T_max   = 300.
 

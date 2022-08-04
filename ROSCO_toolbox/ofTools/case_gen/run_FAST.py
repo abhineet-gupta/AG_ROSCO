@@ -274,12 +274,20 @@ if __name__ == "__main__":
 
         # RAAW FAD set up
         r.tuning_yaml   = '/Users/dzalkind/Tools/ROSCO_QED/Tune_Cases/UAE.yaml'
-        r.wind_case_fcn = cl.user_hh
+        # r.wind_case_fcn = cl.user_hh
+        # r.wind_case_opts    = {
+        #     'TMax': 30.,
+        #     # 'wind_filenames': ['/Users/dzalkind/Tools/ROSCO_QED/Test_Cases/UAE_Upwind/PwrCrv.wnd']
+        #     }
+        r.wind_case_fcn = cl.simp_step
         r.wind_case_opts    = {
-            'TMax': 30.,
-            'wind_filenames': ['/Users/dzalkind/Tools/ROSCO_QED/Test_Cases/UAE_Upwind/PwrCrv.wnd']
+            'U_start': [16],
+            'U_end': [17],
+            # 'T_max': 120,
+            # 'T_step': 60,
+            'wind_dir': '/Users/dzalkind/Tools/ROSCO_QED/outputs/UAE_steps'
             }
-        r.save_dir      = '/Users/dzalkind/Tools/ROSCO_QED/outputs/UAE_setup'
+        r.save_dir      = '/Users/dzalkind/Tools/ROSCO_QED/outputs/UAE_steps'
         # r.control_sweep_fcn = cl.sweep_ps_percent
         r.n_cores = 1
 
