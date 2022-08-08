@@ -198,6 +198,7 @@ CONTAINS
         TYPE(ZMQ_Variables),        INTENT(INOUT)       :: zmqVar                       ! Control parameter type
         
         INTEGER(IntKi)                                  :: UnControllerParameters  ! Unit number to open file
+        INTEGER(IntKi)                                  :: UnSpdTqFile  ! Unit number to open file
         INTEGER(IntKi)                                  :: CurLine 
         ! INTEGER(IntKi), PARAMETER                       :: UnControllerParameters = 89  ! Unit number to open file
 
@@ -307,6 +308,7 @@ CONTAINS
         CALL ParseAry(UnControllerParameters, CurLine, 'VS_KP', CntrPar%VS_KP, CntrPar%VS_n, accINFILE(1), ErrVar )
         CALL ParseAry(UnControllerParameters, CurLine, 'VS_KI', CntrPar%VS_KI, CntrPar%VS_n, accINFILE(1), ErrVar )
         CALL ParseInput(UnControllerParameters,CurLine,'VS_TSRopt',accINFILE(1),CntrPar%VS_TSRopt,ErrVar)
+        CALL ParseInput(UnControllerParameters,CurLine,'VS_SpdTqFile',accINFILE(1),CntrPar%VS_SpdTqFile,ErrVar)
         CALL ReadEmptyLine(UnControllerParameters,CurLine)
 
         !------- Setpoint Smoother --------------------------------
@@ -406,6 +408,13 @@ CONTAINS
         ! Fix Paths (add relative paths if called from another dir)
         IF (PathIsRelative(CntrPar%PerfFileName)) CntrPar%PerfFileName = TRIM(PriPath)//TRIM(CntrPar%PerfFileName)
         IF (PathIsRelative(CntrPar%OL_Filename)) CntrPar%OL_Filename = TRIM(PriPath)//TRIM(CntrPar%OL_Filename)
+        
+        ! Read torque-speed curve, if desired
+        IF (CntrPar%VS_ControlMode == 4) THEN
+            CALL GetNewUnit(UnSpdTqFile, ErrVar)
+            PRINT *, "Reading VS_SpdTqFile: ", TRIM(CntrPar%VS_SpdTqFile)
+            CALL Read_OL_Input(CntrPar%VS_SpdTqFile,UnSpdTqFile,2_IntKi,CntrPar%VS_SpdTq, ErrVar)
+        ENDIF
         
         ! Read open loop input, if desired
         IF (CntrPar%OL_Mode == 1) THEN
@@ -594,9 +603,9 @@ CONTAINS
         ENDIF
 
         ! VS_ControlMode
-        IF ((CntrPar%VS_ControlMode < 0) .OR. (CntrPar%VS_ControlMode > 3)) THEN
+        IF ((CntrPar%VS_ControlMode < 0) .OR. (CntrPar%VS_ControlMode > 4)) THEN
             ErrVar%aviFAIL = -1
-            ErrVar%ErrMsg  = 'VS_ControlMode must be 0, 1, 2, or 3.'
+            ErrVar%ErrMsg  = 'VS_ControlMode must be 0, 1, 2, 3, or 4.'
         ENDIF
 
         ! PC_ControlMode

@@ -242,6 +242,16 @@ ControlParameters:
     VS_TSRopt:
       <<: *real
       description: Power-maximizing region 2 tip-speed ratio [rad]
+    # Speed Torque
+    VS_SpdTqFile:
+      <<: *character
+      description: Input file with open loop timeseries
+      length: 1024
+    VS_SpdTq:
+      <<: *real
+      allocatable: True
+      dimension: (:,:)
+      description: Open loop channels in timeseries
     
     # Setpoint Smoother
     SS_Mode:

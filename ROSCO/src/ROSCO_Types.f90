@@ -61,6 +61,8 @@ TYPE, PUBLIC :: ControlParameters
     REAL(DbKi), DIMENSION(:), ALLOCATABLE     :: VS_KP                       ! Proportional gain for generator PI torque controller, used in the transitional 2.5 region
     REAL(DbKi), DIMENSION(:), ALLOCATABLE     :: VS_KI                       ! Integral gain for generator PI torque controller, used in the transitional 2.5 region
     REAL(DbKi)                    :: VS_TSRopt                   ! Power-maximizing region 2 tip-speed ratio [rad]
+    CHARACTER(1024)               :: VS_SpdTqFile                ! Input file with open loop timeseries
+    REAL(DbKi), DIMENSION(:,:), ALLOCATABLE     :: VS_SpdTq                    ! Open loop channels in timeseries
     INTEGER(IntKi)                :: SS_Mode                     ! Setpoint Smoother mode {0 - no setpoint smoothing, 1 - introduce setpoint smoothing}
     REAL(DbKi)                    :: SS_VSGain                   ! Variable speed torque controller setpoint smoother gain, [-].
     REAL(DbKi)                    :: SS_PCGain                   ! Collective pitch controller setpoint smoother gain, [-].

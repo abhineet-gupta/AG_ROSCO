@@ -770,7 +770,7 @@ SUBROUTINE Read_OL_Input(OL_InputFileName, Unit_OL_Input, NumChannels, Channels,
 
     CHARACTER(1024), INTENT(IN)                             :: OL_InputFileName    ! DISCON input filename
     INTEGER(IntKi), INTENT(IN)                              :: Unit_OL_Input 
-    INTEGER(IntKi), INTENT(IN)                              :: NumChannels     ! Number of open loop channels being defined
+    INTEGER(IntKi), INTENT(IN)                              :: NumChannels     ! Number of open loop channels being defined, number of columns in file
     ! REAL(DbKi), INTENT(OUT), DIMENSION(:), ALLOCATABLE      :: Breakpoints    ! Breakpoints of open loop Channels
     REAL(DbKi), INTENT(OUT), DIMENSION(:,:), ALLOCATABLE    :: Channels         ! Open loop channels
     TYPE(ErrorVariables),         INTENT(INOUT)          :: ErrVar   ! Current line of input

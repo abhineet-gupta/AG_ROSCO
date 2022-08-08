@@ -69,7 +69,7 @@ def write_DISCON(turbine, controller, param_file='DISCON.IN', txt_filename='Cp_C
     file.write('{0:<12d}        ! F_LPFType			- {{1: first-order low-pass filter, 2: second-order low-pass filter}}, [rad/s] (currently filters generator speed and pitch control signals\n'.format(int(rosco_vt['F_LPFType'])))
     file.write('{0:<12d}        ! F_NotchType		- Notch on the measured generator speed and/or tower fore-aft motion (for floating) {{0: disable, 1: generator speed, 2: tower-top fore-aft motion, 3: generator speed and tower-top fore-aft motion}}\n'.format(int(rosco_vt['F_NotchType'])))
     file.write('{0:<12d}        ! IPC_ControlMode	- Turn Individual Pitch Control (IPC) for fatigue load reductions (pitch contribution) {{0: off, 1: 1P reductions, 2: 1P+2P reductions}}\n'.format(int(rosco_vt['IPC_ControlMode'])))
-    file.write('{0:<12d}        ! VS_ControlMode	- Generator torque control mode in above rated conditions {{0: constant torque, 1: constant power, 2: TSR tracking PI control with constant torque, 3: TSR tracking PI control with constant power}}\n'.format(int(rosco_vt['VS_ControlMode'])))
+    file.write('{0:<12d}        ! VS_ControlMode	- Generator torque control mode in above rated conditions {{0: constant torque, 1: constant power, 2: TSR tracking PI control with constant torque, 3: TSR tracking PI control with constant power, 4: Torque based on speed curve}}\n'.format(int(rosco_vt['VS_ControlMode'])))
     file.write('{0:<12d}        ! PC_ControlMode    - Blade pitch control mode {{0: No pitch, fix to fine pitch, 1: active PI blade pitch control}}\n'.format(int(rosco_vt['PC_ControlMode'])))
     file.write('{0:<12d}        ! Y_ControlMode		- Yaw control mode {{0: no yaw control, 1: yaw rate control, 2: yaw-by-IPC}}\n'.format(int(rosco_vt['Y_ControlMode'])))
     file.write('{0:<12d}        ! SS_Mode           - Setpoint Smoother mode {{0: no setpoint smoothing, 1: introduce setpoint smoothing}}\n'.format(int(rosco_vt['SS_Mode'])))
@@ -136,6 +136,7 @@ def write_DISCON(turbine, controller, param_file='DISCON.IN', txt_filename='Cp_C
     file.write('{:<014.5f}      ! VS_KP				- Proportional gain for generator PI torque controller [-]. (Only used in the transitional 2.5 region if VS_ControlMode =/ 2)\n'.format(rosco_vt['VS_KP']))
     file.write('{:<014.5f}      ! VS_KI				- Integral gain for generator PI torque controller [s]. (Only used in the transitional 2.5 region if VS_ControlMode =/ 2)\n'.format(rosco_vt['VS_KI']))
     file.write('{:<13.2f}       ! VS_TSRopt			- Power-maximizing region 2 tip-speed-ratio [rad].\n'.format(rosco_vt['VS_TSRopt']))
+    file.write('{}              ! VS_SpdTqFile  	- Speed-torque lookup table for torque control\n'.format(rosco_vt['VS_SpdTqFile']))
     file.write('\n')
     file.write('!------- SETPOINT SMOOTHER ---------------------------------------------\n')
     file.write('{:<13.5f}       ! SS_VSGain         - Variable speed torque controller setpoint smoother gain, [-].\n'.format(rosco_vt['SS_VSGain']))
@@ -451,6 +452,7 @@ def DISCON_dict(turbine, controller, txt_filename=None):
     DISCON_dict['VS_KP']			= controller.vs_gain_schedule.Kp[-1]
     DISCON_dict['VS_KI']			= controller.vs_gain_schedule.Ki[-1]
     DISCON_dict['VS_TSRopt']		= turbine.TSR_operational
+    DISCON_dict['VS_SpdTqFile']		= "unused"
     # ------- SETPOINT SMOOTHER -------
     DISCON_dict['SS_VSGain']         = controller.ss_vsgain
     DISCON_dict['SS_PCGain']         = controller.ss_pcgain
