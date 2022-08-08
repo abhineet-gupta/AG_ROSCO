@@ -195,7 +195,7 @@ CONTAINS
             LocalVar%GenTq = saturate(LocalVar%GenTq, CntrPar%VS_MinTq, LocalVar%VS_MaxTq)
         
         ! K*Omega^2 control law with PI torque control in transition regions
-        ELSE
+        ELSEIF ((CntrPar%VS_ControlMode == 0) .OR. (CntrPar%VS_ControlMode == 1)) THEN
             ! Update PI loops for region 1.5 and 2.5 PI control
             LocalVar%GenArTq = PIController(LocalVar%VS_SpdErrAr, CntrPar%VS_KP(1), CntrPar%VS_KI(1), CntrPar%VS_MaxOMTq, CntrPar%VS_ArSatTq, LocalVar%DT, CntrPar%VS_MaxOMTq, LocalVar%piP, LocalVar%restart, objInst%instPI)
             LocalVar%GenBrTq = PIController(LocalVar%VS_SpdErrBr, CntrPar%VS_KP(1), CntrPar%VS_KI(1), CntrPar%VS_MinTq, CntrPar%VS_MinOMTq, LocalVar%DT, CntrPar%VS_MinOMTq, LocalVar%piP, LocalVar%restart, objInst%instPI)
@@ -215,6 +215,11 @@ CONTAINS
             
             ! Saturate
             LocalVar%GenTq = saturate(LocalVar%GenTq, CntrPar%VS_MinTq, CntrPar%VS_MaxTq)
+        
+        ELSEIF (CntrPar%VS_ControlMode == 4) THEN
+        ! Lookup table control based on torque speed curve
+            LocalVar%GenTq = interp1d(CntrPar%VS_SpdTq(:,1),CntrPar%VS_SpdTq(:,2),LocalVar%GenSpeedF,ErrVar)
+        
         ENDIF
 
 
