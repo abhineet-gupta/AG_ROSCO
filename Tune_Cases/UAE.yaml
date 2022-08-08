@@ -16,9 +16,9 @@ turbine_params:
   v_rated:            11.4                  # Rated wind speed [m/s]
   v_max:              25.0                  # Cut-out wind speed [m/s], -- Does not need to be exact (JUST ASSUME FOR NOW)
   max_pitch_rate:     0.1745                # Maximum blade pitch rate [rad/s]
-  max_torque_rate:    25.              # Maximum torque rate [Nm/s], {~1/4 VS_RtTq/s}
+  max_torque_rate:    2500.              # Maximum torque rate [Nm/s], {~1/4 VS_RtTq/s}
   rated_power:        20000.              # Rated Power [W]
-  bld_edgewise_freq:  16.2831853             # Blade edgewise first natural frequency [rad/s]
+  bld_edgewise_freq:  106.2831853             # Blade edgewise first natural frequency [rad/s]
   bld_flapwise_freq:  0.0                   # Blade flapwise first natural frequency [rad/s]
   # Optional 
   # TSR_operational:    # None                # Desired below-rated operational tip speed ratio (Cp-maximizing TSR is used if not defined)
@@ -46,4 +46,4 @@ controller_params:
   vs_minspd:          0
 
   DISCON:
-    VS_SpdTqFile: /Users/dzalkind/Tools/ROSCO_QED/Test_Cases/UAE_Upwind/spd_tq.dat
+    VS_SpdTqFile: /Users/dzalkind/Tools/ROSCO_QED/Test_Cases/UAE_Upwind/spd_tq2.dat
