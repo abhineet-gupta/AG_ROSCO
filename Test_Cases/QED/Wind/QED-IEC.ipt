@@ -1,0 +1,30 @@
+!HEADER: Input file for IECWind version 5.01.01, applied to the QED PHX20 wind turbine with 12.1m dia rotor on 30.5m tower with 31m HH
+!Output file parameters
+True       SI UNITS (True=SI or False=ENGLISH)
+10.        Time for start of IEC transient condition, sec
+!Wind Site parameters
+2          IEC WIND TURBINE CLASS (1, 2 or 3)
+A          WIND TURBULENCE CATEGORY (A, B or C)
+8          Slope of the wind inflow (IEC specifies between -8 and +8), deg
+3          IEC standard used for wind shear exponent
+!Turbine parameters
+31.0       Wind turbine hub-height, m or ft
+12.3       Wind turbine rotor diameter, m or ft
+3.0        Cut-in wind speed, m/s or ft/s
+8.7        Rated wind speed, m/s or ft/s
+20.0       Cut-out wind speed, m/s or ft/s
+!List of Conditions to generate (one per line)
+ECD+r
+ECD-r
+EOGi
+EOGo
+EDC+i
+EDC+o
+EDC-i
+EDC-o
+NWP20.0
+EWM50
+EWM01
+
+
+
