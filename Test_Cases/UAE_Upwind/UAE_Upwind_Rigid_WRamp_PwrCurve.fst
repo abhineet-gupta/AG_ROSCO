@@ -3,7 +3,7 @@ FAST Certification Test #10: UAE Phase VI (upwind) with no DOFs in a ramped wind
 ---------------------- SIMULATION CONTROL --------------------------------------
 True          Echo            - Echo input data to <RootName>.ech (flag)
 "FATAL"       AbortLevel      - Error level when simulation should abort (string) {"WARNING", "SEVERE", "FATAL"}
-         25   TMax            - Total run time (s)
+         300   TMax            - Total run time (s)
       0.004   DT              - Recommended module time step (s)
           2   InterpOrder     - Interpolation order for input/output time history (-) {1=linear, 2=quadratic}
           0   NumCrctn        - Number of correction iterations (-) {0=explicit calculation, i.e., no corrections}

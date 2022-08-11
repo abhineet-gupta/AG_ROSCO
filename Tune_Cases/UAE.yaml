@@ -17,7 +17,7 @@ turbine_params:
   v_max:              25.0                  # Cut-out wind speed [m/s], -- Does not need to be exact (JUST ASSUME FOR NOW)
   max_pitch_rate:     0.1745                # Maximum blade pitch rate [rad/s]
   max_torque_rate:    2500.              # Maximum torque rate [Nm/s], {~1/4 VS_RtTq/s}
-  rated_power:        20000.              # Rated Power [W]
+  rated_power:        100000.              # Rated Power [W]
   bld_edgewise_freq:  106.2831853             # Blade edgewise first natural frequency [rad/s]
   bld_flapwise_freq:  0.0                   # Blade flapwise first natural frequency [rad/s]
   # Optional 
