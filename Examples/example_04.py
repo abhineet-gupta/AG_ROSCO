@@ -23,7 +23,7 @@ from ROSCO_toolbox.inputs.validation import load_rosco_yaml
 # Load yaml file 
 this_dir = os.path.dirname(os.path.abspath(__file__))
 tune_dir =  os.path.join(this_dir,'../Tune_Cases')
-parameter_filename = os.path.join(tune_dir,'UAE.yaml')
+parameter_filename = os.path.join(tune_dir,'QED.yaml')
 inps = load_rosco_yaml(parameter_filename)
 path_params         = inps['path_params']
 turbine_params      = inps['turbine_params']
@@ -46,7 +46,7 @@ turbine.load_from_fast(
 controller.tune_controller(turbine)
 
 # Write parameter input file
-param_file = '/Users/dzalkind/Tools/ROSCO_QED/Test_Cases/UAE_Upwind/DISCON_ROSCO.IN'
+param_file = '/Users/dzalkind/Tools/ROSCO_QED/Test_Cases/QED/DISCON.IN'
 write_DISCON(turbine,controller,
 param_file=param_file, 
 txt_filename=cp_filename

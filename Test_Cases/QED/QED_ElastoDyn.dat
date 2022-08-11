@@ -30,7 +30,7 @@ False         PtfmYDOF    - Platform yaw rotation DOF (flag)
           0   BlPitch(3)  - Blade 3 initial pitch (degrees) [unused for 2 blades]
           0   TeetDefl    - Initial or fixed teeter angle (degrees) [unused for 3 blades]
           0   Azimuth     - Initial azimuth angle for blade 1 (degrees)
-         60   RotSpeed    - Initial or fixed rotor speed (rpm)
+         40   RotSpeed    - Initial or fixed rotor speed (rpm)
           0   NacYaw      - Initial or fixed nacelle-yaw angle (degrees)
           0   TTDspFA     - Initial fore-aft tower-top displacement (meters)
           0   TTDspSS     - Initial side-to-side tower-top displacement (meters)
@@ -141,5 +141,7 @@ True          TabDelim    - Use tab delimiters in text tabular output file? (fla
 "YawBrMyp"                - Tower-top / yaw bearing pitch moment (kN-m)
 "TwrBsMxt"                - Tower base side-to-side moment (kN-m)
 "TwrBsMyt"                - Tower base fore-aft moment (kN-m)
+"GenSpeed"
+"NacYaw"
 END of input file (the word "END" must appear in the first 3 columns of this last OutList line)
 ---------------------------------------------------------------------------------------
