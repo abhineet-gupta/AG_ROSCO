@@ -265,6 +265,16 @@ CONTAINS
         CALL ParseAry(UnControllerParameters, CurLine, 'F_FlpCornerFreq', CntrPar%F_FlpCornerFreq, 2, accINFILE(1), ErrVar )
         CALL ReadEmptyLine(UnControllerParameters,CurLine)
 
+        !------- YAW SPEED REGULATION ----------------------------------------------
+        CALL ReadEmptyLine(UnControllerParameters,CurLine)
+        CALL ParseInput(UnControllerParameters,CurLine,'Yaw_StartRegSpeed',accINFILE(1),CntrPar%Yaw_StartRegSpeed,ErrVar)
+        CALL ParseInput(UnControllerParameters,CurLine,'Yaw_RegDelay',accINFILE(1),CntrPar%Yaw_RegDelay,ErrVar)
+        CALL ParseInput(UnControllerParameters,CurLine,'Yaw_OutAngle',accINFILE(1),CntrPar%Yaw_OutAngle,ErrVar)
+        CALL ParseInput(UnControllerParameters,CurLine,'Yaw_OutSpeed',accINFILE(1),CntrPar%Yaw_OutSpeed,ErrVar)
+        CALL ParseInput(UnControllerParameters,CurLine,'Yaw_RestartDelay',accINFILE(1),CntrPar%Yaw_RestartDelay,ErrVar)
+        CALL ParseInput(UnControllerParameters,CurLine,'Yaw_StopRegSpeed',accINFILE(1),CntrPar%Yaw_StopRegSpeed,ErrVar)
+        CALL ReadEmptyLine(UnControllerParameters,CurLine)
+
         !----------- BLADE PITCH CONTROLLER CONSTANTS -----------
         CALL ReadEmptyLine(UnControllerParameters,CurLine)
         CALL ParseInput(UnControllerParameters,CurLine,'PC_GS_n',accINFILE(1),CntrPar%PC_GS_n,ErrVar)

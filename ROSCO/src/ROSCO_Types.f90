@@ -21,6 +21,12 @@ TYPE, PUBLIC :: ControlParameters
     REAL(DbKi)                    :: F_FlHighPassFreq            ! Natural frequency of first-roder high-pass filter for nacelle fore-aft motion [rad/s].
     REAL(DbKi)                    :: F_YawErr                    ! Corner low pass filter corner frequency for yaw controller [rad/s].
     REAL(DbKi), DIMENSION(:), ALLOCATABLE     :: F_FlpCornerFreq             ! Corner frequency (-3dB point) in the second order low pass filter of the blade root bending moment for flap control [rad/s].
+    REAL(DbKi)                    :: Yaw_StartRegSpeed           ! Speed used to trigger yaw-out speed regulation [rpm]
+    REAL(DbKi)                    :: Yaw_RegDelay                ! Wait Yaw_RegDelay after GenSpeed > Yaw_RegSpeed before yaw-out [sec]
+    REAL(DbKi)                    :: Yaw_OutAngle                ! Yaw out by this angle [deg]
+    REAL(DbKi)                    :: Yaw_OutSpeed                ! Yaw out by this speed [deg/s]
+    REAL(DbKi)                    :: Yaw_RestartDelay            ! After yaw moves, wait Yaw_RestartDelay before re-checking and repeating yaw-out [sec]
+    REAL(DbKi)                    :: Yaw_StopRegSpeed            ! Stop regulating when generator speed < Yaw_StopRegSpeed
     INTEGER(IntKi)                :: TD_Mode                     ! Tower damper mode (0- no tower damper, 1- feed back translational nacelle accelleration to pitch angle
     REAL(DbKi)                    :: FA_HPFCornerFreq            ! Corner frequency (-3dB point) in the high-pass filter on the fore-aft acceleration signal [rad/s]
     REAL(DbKi)                    :: FA_IntSat                   ! Integrator saturation (maximum signal amplitude contrbution to pitch from FA damper), [rad]

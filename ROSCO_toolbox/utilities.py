@@ -96,7 +96,14 @@ def write_DISCON(turbine, controller, param_file='DISCON.IN', txt_filename='Cp_C
     file.write('{}! F_FlCornerFreq    - Natural frequency and damping in the second order low pass filter of the tower-top fore-aft motion for floating feedback control [rad/s, -].\n'.format(''.join('{:<4.6f}  '.format(rosco_vt['F_FlCornerFreq'][i]) for i in range(len(rosco_vt['F_FlCornerFreq'])))))
     file.write('{:<13.5f}       ! F_FlHighPassFreq    - Natural frequency of first-order high-pass filter for nacelle fore-aft motion [rad/s].\n'.format(rosco_vt['F_FlHighPassFreq']))
     file.write('{}! F_FlpCornerFreq   - Corner frequency and damping in the second order low pass filter of the blade root bending moment for flap control [rad/s, -].\n'.format(''.join('{:<4.6f}  '.format(rosco_vt['F_FlpCornerFreq'][i]) for i in range(len(rosco_vt['F_FlpCornerFreq'])))))
-    
+    file.write('\n')
+    file.write('!------- YAW SPEED REGULATION ----------------------------------------------\n') 
+    file.write('{:<13.5f}           ! Yaw_StartRegSpeed	- Speed used to trigger yaw-out speed regulation [rpm] \n'.format(rosco_vt['Yaw_StartRegSpeed']))
+    file.write('{:<13.5f}           ! Yaw_RegDelay		- Wait Yaw_RegDelay after GenSpeed > Yaw_RegSpeed before yaw-out [sec] \n'.format(rosco_vt['Yaw_RegDelay']))
+    file.write('{:<13.5f}           ! Yaw_OutAngle		- Yaw out by this angle [deg] \n'.format(rosco_vt['Yaw_OutAngle']))
+    file.write('{:<13.5f}           ! Yaw_OutSpeed      - Yaw out by this speed [deg/s]\n'.format(rosco_vt['Yaw_OutSpeed']))
+    file.write('{:<13.5f}           ! Yaw_RestartDelay  - After yaw moves, wait Yaw_RestartDelay before re-checking and repeating yaw-out [sec]\n'.format(rosco_vt['Yaw_RestartDelay']))
+    file.write('{:<13.5f}           ! Yaw_StopRegSpeed  - Stop regulating when generator speed < Yaw_StopRegSpeed\n'.format(rosco_vt['Yaw_StopRegSpeed']))
     file.write('\n')
     file.write('!------- BLADE PITCH CONTROL ----------------------------------------------\n')
     file.write('{:<11d}         ! PC_GS_n			- Amount of gain-scheduling table entries\n'.format(int(rosco_vt['PC_GS_n'])))
@@ -416,6 +423,14 @@ def DISCON_dict(turbine, controller, txt_filename=None):
     DISCON_dict['F_YawErr']             = controller.f_yawerr
     DISCON_dict['F_FlHighPassFreq']     = controller.f_fl_highpassfreq
     DISCON_dict['F_FlCornerFreq']       = [controller.ptfm_freq, 1.0]
+    # -------- YAW SPEED REGULATION ----------
+    DISCON_dict['Yaw_StartRegSpeed']    = 75
+    DISCON_dict['Yaw_RegDelay']	        = 1.5
+    DISCON_dict['Yaw_OutAngle']	        = 1.5
+    DISCON_dict['Yaw_OutSpeed']         = 1.5
+    DISCON_dict['Yaw_RestartDelay']     = 10
+    DISCON_dict['Yaw_StopRegSpeed']     = 72
+
     # ------- BLADE PITCH CONTROL -------
     DISCON_dict['PC_GS_n']			= len(controller.pitch_op_pc)
     DISCON_dict['PC_GS_angles']	    = controller.pitch_op_pc

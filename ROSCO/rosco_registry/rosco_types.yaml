@@ -103,6 +103,26 @@ ControlParameters:
       <<: *real
       description: Corner frequency (-3dB point) in the second order low pass filter of the blade root bending moment for flap control [rad/s].
       allocatable: True
+
+    # YAW SPEED REGULATION 
+    Yaw_StartRegSpeed:
+      <<: *real
+      description: Speed used to trigger yaw-out speed regulation [rpm] 
+    Yaw_RegDelay:
+      <<: *real
+      description: Wait Yaw_RegDelay after GenSpeed > Yaw_RegSpeed before yaw-out [sec] 
+    Yaw_OutAngle:
+      <<: *real
+      description: Yaw out by this angle [deg] 
+    Yaw_OutSpeed:
+      <<: *real
+      description: Yaw out by this speed [deg/s]
+    Yaw_RestartDelay:
+      <<: *real
+      description: After yaw moves, wait Yaw_RestartDelay before re-checking and repeating yaw-out [sec]
+    Yaw_StopRegSpeed:
+      <<: *real
+      description: Stop regulating when generator speed < Yaw_StopRegSpeed
     
     # Tower fore-aft damping
     TD_Mode:

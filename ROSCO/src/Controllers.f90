@@ -249,6 +249,41 @@ CONTAINS
         ENDIF
 
     END SUBROUTINE VariableSpeedControl
+
+!-------------------------------------------------------------------------------------------------------------------------------
+    SUBROUTINE YawSpeedRegulation(avrSWAP, CntrPar, LocalVar, objInst, zmqVar, DebugVar, ErrVar)
+        ! Yaw rate controller
+        !       Y_ControlMode = 0, No yaw control
+        !       Y_ControlMode = 1, Yaw rate control using yaw drive
+
+        ! TODO: Lots of R2D->D2R, this should be cleaned up.
+        ! TODO: The constant offset implementation is sort of circular here as a setpoint is already being defined in SetVariablesSetpoints. This could also use cleanup
+        USE ROSCO_Types, ONLY : ControlParameters, LocalVariables, ObjectInstances, DebugVariables, ErrorVariables, ZMQ_Variables
+    
+        REAL(C_FLOAT), INTENT(INOUT) :: avrSWAP(*) ! The swap array, used to pass data to, and receive data from, the DLL controller.
+    
+        TYPE(ControlParameters), INTENT(INOUT)    :: CntrPar
+        TYPE(LocalVariables), INTENT(INOUT)       :: LocalVar
+        TYPE(ObjectInstances), INTENT(INOUT)      :: objInst
+        TYPE(DebugVariables), INTENT(INOUT)       :: DebugVar
+        TYPE(ErrorVariables), INTENT(INOUT)       :: ErrVar
+        TYPE(ZMQ_Variables), INTENT(INOUT)  :: zmqVar
+
+        ! Allocate Variables
+        REAL(DbKi), SAVE :: NacVaneOffset                          ! For offset control
+        INTEGER, SAVE :: YawState                               ! Yawing left(-1), right(1), or stopped(0)
+        REAL(DbKi)       :: WindDir                                ! Instantaneous wind dind direction, equal to turbine nacelle heading plus the measured vane angle (deg)
+        REAL(DbKi)       :: WindDirPlusOffset                     ! Instantaneous wind direction minus the assigned vane offset (deg)
+        REAL(DbKi)       :: WindDirPlusOffsetCosF                 ! Time-filtered x-component of WindDirPlusOffset (deg)
+        REAL(DbKi)       :: WindDirPlusOffsetSinF                 ! Time-filtered y-component of WindDirPlusOffset (deg)
+        REAL(DbKi)       :: NacHeadingTarget                       ! Time-filtered wind direction minus the assigned vane offset (deg)
+        REAL(DbKi), SAVE :: NacHeadingError                        ! Yaw error (deg)
+        REAL(DbKi)       :: YawRateCom                             ! Commanded yaw rate (deg/s)
+        REAL(DbKi)       :: deadband                               ! Allowable yaw error deadband (deg)
+        REAL(DbKi)       :: Time                                   ! Current time
+        INTEGER, SAVE :: Tidx                                   ! Index i: commanded yaw error is interpolated between i and i+1
+
+
 !-------------------------------------------------------------------------------------------------------------------------------
     SUBROUTINE YawRateControl(avrSWAP, CntrPar, LocalVar, objInst, zmqVar, DebugVar, ErrVar)
         ! Yaw rate controller
