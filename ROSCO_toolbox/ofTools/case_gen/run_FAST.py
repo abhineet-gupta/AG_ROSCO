@@ -179,7 +179,7 @@ class run_FAST_ROSCO():
 if __name__ == "__main__":
 
     # Simulation config
-    sim_config = 12
+    sim_config = 14
     
     r = run_FAST_ROSCO()
 
@@ -192,104 +192,28 @@ if __name__ == "__main__":
         r.sweep_mode  = None
         r.save_dir    = '/Users/dzalkind/Tools/ROSCO/outputs'
     
-    elif sim_config == 6:
-
-        # FOCAL rated wind speed tuning
-        r.tuning_yaml   = os.path.join(tune_case_dir,'IEA15MW_FOCAL.yaml')
-        r.wind_case_fcn = power_curve
-        r.sweep_mode    = cl.sweep_rated_torque
-        r.save_dir      = '/Users/dzalkind/Projects/FOCAL/drop_torque'
-
-    elif sim_config == 7:
-
-        # FOCAL rated wind speed tuning
-        r.tuning_yaml   = os.path.join(tune_case_dir,'IEA15MW.yaml')
-        r.wind_case_fcn     = cl.steps
-        r.wind_case_opts    = {
-            'tt': [100,200], 
-            'U': [16,18],
-            'U_0': 13
-            }
-        r.sweep_mode    = None
-        r.save_dir      = '/Users/dzalkind/Tools/ROSCO/outputs'
-        r.control_sweep_fcn = cl.sweep_pitch_act
-        r.control_sweep_opts = {
-            'act_bw': np.array([0.25,0.5,1,10]) * np.pi * 2
-        }
-
-        r.n_cores = 4
-
-    elif sim_config == 8:
-
-        # RAAW IPC set up
-        r.tuning_yaml   = '/Users/dzalkind/Projects/RAAW/RAAW_OpenFAST/ROSCO/RAAW_rosco_BD.yaml'
-        r.wind_case_fcn = cl.power_curve
-        r.wind_case_opts    = {
-            'U': [16],
-            }
-        r.save_dir      = '/Users/dzalkind/Projects/RAAW/RAAW_OpenFAST/outputs/IPC_play'
-        r.control_sweep_fcn = cl.sweep_ipc_gains
-
-    elif sim_config == 9:
-
-        # RAAW FAD set up
-        r.tuning_yaml   = '/Users/dzalkind/Projects/RAAW/RAAW_OpenFAST/ROSCO/RAAW_rosco_BD.yaml'
-        r.wind_case_fcn = cl.simp_step
-        r.wind_case_opts    = {
-            'U_start': [13],
-            'U_end': [15],
-            'wind_dir': '/Users/dzalkind/Projects/RAAW/RAAW_OpenFAST/outputs/FAD_play'
-            }
-        r.save_dir      = '/Users/dzalkind/Projects/RAAW/RAAW_OpenFAST/outputs/FAD_play'
-        r.control_sweep_fcn = cl.sweep_fad_gains
-        r.n_cores = 8
-
-    elif sim_config == 10:
-
-        # RAAW FAD set up
-        r.tuning_yaml   = '/Users/dzalkind/Projects/RAAW/RAAW_OpenFAST/ROSCO/RAAW_rosco_BD.yaml'
-        r.wind_case_fcn = cl.turb_bts
-        r.wind_case_opts    = {
-            'TMax': 720,
-            'wind_filenames': ['/Users/dzalkind/Tools/WEIS-2/outputs/02_RAAW_IPC/wind/RAAW_NTM_U12.000000_Seed1693606511.0.bts']
-            }
-        r.save_dir      = '/Users/dzalkind/Projects/RAAW/RAAW_OpenFAST/outputs/PS_BD'
-        r.control_sweep_fcn = cl.sweep_ps_percent
-        r.n_cores = 8
-
-    elif sim_config == 11:
-
-        # RAAW FAD set up
-        r.tuning_yaml   = '/Users/dzalkind/Projects/RAAW/RAAW_OpenFAST/ROSCO/RAAW_rosco_BD.yaml'
-        r.wind_case_fcn = cl.user_hh
-        r.wind_case_opts    = {
-            'TMax': 1000.,
-            'wind_filenames': ['/Users/dzalkind/Projects/RAAW/RAAW_OpenFAST/Performance/GE_P3_WindStep.asc']
-            }
-        r.save_dir      = '/Users/dzalkind/Projects/RAAW/RAAW_OpenFAST/outputs/PS_steps'
-        r.control_sweep_fcn = cl.sweep_ps_percent
-        r.n_cores = 4
 
     elif sim_config == 12:
 
-        # RAAW FAD set up
-        r.tuning_yaml   = '/Users/dzalkind/Tools/ROSCO_QED/Tune_Cases/UAE.yaml'
+        # QED EOG
+        r.tuning_yaml   = 'QED.yaml'
         r.wind_case_fcn = cl.user_hh
         r.wind_case_opts    = {
             'TMax': 300.,
-            'wind_filenames': ['/Users/dzalkind/Tools/ROSCO_QED/Test_Cases/UAE_Upwind/test_EOG_U10.0.wnd']
+            'wind_filenames': ['/Users/dzalkind/Tools/ROSCO_QED/Test_Cases/QED/Wind/EOGO.wnd']
             }
-        # r.wind_case_fcn = cl.simp_step
-        # r.wind_case_opts    = {
-        #     'U_start': [8],
-        #     'U_end': [18],
-        #     # 'T_max': 120,
-        #     # 'T_step': 60,
-        #     'wind_dir': '/Users/dzalkind/Tools/ROSCO_QED/outputs/UAE_steps'
-        #     }
-        r.save_dir      = '/Users/dzalkind/Tools/ROSCO_QED/outputs/UAE_EOG_lowTq'
+        r.save_dir      = '/Users/dzalkind/Tools/ROSCO_QED/outputs/QED_EOGO'
         # r.control_sweep_fcn = cl.sweep_ps_percent
         r.n_cores = 1
+
+    elif sim_config == 14:
+
+        # QED Power curve
+        r.tuning_yaml   = 'QED.yaml'
+        r.wind_case_fcn = cl.power_curve
+        r.save_dir      = '/Users/dzalkind/Tools/ROSCO_QED/outputs/QED2'
+        # r.control_sweep_fcn = cl.sweep_ps_percent
+        r.n_cores = 8
 
     else:
         raise Exception('This simulation configuration is not supported.')

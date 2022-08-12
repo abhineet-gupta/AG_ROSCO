@@ -74,7 +74,7 @@ def base_op_case():
     
     # DOFs
     case_inputs[("ElastoDyn","GenDOF")]      = {'vals':['True'], 'group':0} 
-    if True:
+    if False:
         case_inputs[("ElastoDyn","YawDOF")]      = {'vals':['True'], 'group':0}
         case_inputs[("ElastoDyn","FlapDOF1")]    = {'vals':['False'], 'group':0}
         case_inputs[("ElastoDyn","FlapDOF2")]    = {'vals':['False'], 'group':0}
@@ -134,7 +134,7 @@ def power_curve(**wind_case_opts):
     else: # default
         # Run conditions
         U = np.arange(4,14.5,.5).tolist()
-        U = np.linspace(9.5,12,num=16)
+        U = np.linspace(3,20,num=16)
 
 
     case_inputs = base_op_case()
