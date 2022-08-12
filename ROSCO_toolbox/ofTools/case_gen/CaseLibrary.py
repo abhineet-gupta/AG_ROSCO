@@ -127,7 +127,10 @@ def power_curve(**wind_case_opts):
     # Constant wind speed, multiple wind speeds, define below
 
     # Runtime
-    T_max   = 400.
+    if 'TMax' in wind_case_opts:
+        TMax = wind_case_opts['TMax']
+    else:
+        TMax = 400.
 
     if 'U' in wind_case_opts:
         U = wind_case_opts['U']
@@ -139,7 +142,7 @@ def power_curve(**wind_case_opts):
 
     case_inputs = base_op_case()
     # simulation settings
-    case_inputs[("Fst","TMax")] = {'vals':[T_max], 'group':0}
+    case_inputs[("Fst","TMax")] = {'vals':[TMax], 'group':0}
 
     # wind inflow
     case_inputs[("InflowWind","WindType")] = {'vals':[1], 'group':0}

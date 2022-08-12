@@ -145,7 +145,7 @@ class output_processing():
                                 # plot
                                 axj.plot(Time, fast_out[channel])
                                 # label
-                                unit_idx = fast_out['meta']['channels'].index(channel)
+                                # unit_idx = fast_out['meta']['channels'].index(channel)
                             except:
                                 print('{} is not available as an output channel.'.format(channel))
                         axj.set_ylabel('{:^} '.format(
