@@ -286,35 +286,39 @@ CONTAINS
         ! Initialize
         IF (LocalVar%iStatus == 0) THEN
             LocalVar%StElapsedTime = 0_DbKi
-            LocalVar%ReElapsedTime = 99999_DbKi
-            ReStartTime = -99999_DbKi
+            LocalVar%ReElapsedTime = 0_DbKi
+            ReStartTime = 0_DbKi
             
             PrevHeading = LocalVar%NacHeading
             LocalVar%YawRateDir = 0_DbKi
             LocalVar%YawRate = 0_DbKi
+            LocalVar%YawOut = .FALSE.
         ENDIF
 
         ! WRITE(400, *) LocalVar%GenSpeedF, CntrPar%Yaw_StartRegSpeed / RPS2RPM, StStartTime, LocalVar%StElapsedTime, LocalVar%iStatus
         
         LocalVar%ReElapsedTime = LocalVar%Time - ReStartTime   ! Increment restart timer
         
-        IF (LocalVar%ReElapsedTime > CntrPar%Yaw_RestartDelay) THEN
-
-            IF (LocalVar%GenSpeedF > (CntrPar%Yaw_StartRegSpeed / RPS2RPM) ) THEN
-                ! Start timer
-                IF (LocalVar%YawRateDir == 0) THEN
-                    LocalVar%StElapsedTime = LocalVar%Time - StStartTime
-                ENDIF
-
-            ELSE ! Reset timers
-                LocalVar%StElapsedTime = 0
-                StStartTime = LocalVar%Time
+        IF (LocalVar%GenSpeedF > (CntrPar%Yaw_StartRegSpeed / RPS2RPM) ) THEN
+            ! Start timer
+            IF (LocalVar%YawRateDir == 0) THEN
+                LocalVar%StElapsedTime = LocalVar%Time - StStartTime
             ENDIF
+
+        ELSE ! Reset timers
+            LocalVar%StElapsedTime = 0
+            StStartTime = LocalVar%Time
+
+            LocalVar%ReElapsedTime = 0
+            ReStartTime = LocalVar%Time
+           
         ENDIF
 
         ! Start yaw maneuver
-        IF (LocalVar%StElapsedTime > CntrPar%Yaw_RegDelay) THEN
+        IF ((LocalVar%StElapsedTime > CntrPar%Yaw_RegDelay) .OR.  & 
+            (LocalVar%ReElapsedTime > CntrPar%Yaw_RestartDelay) .AND. LocalVar%YawOut ) THEN
             ! Yaw out, direction depends on heading 
+            LocalVar%YawOut = .TRUE.        ! Get into yaw out state, where restart delay is active
             IF (LocalVar%NacVane < 0) THEN      ! TODO: check vane behavior
                 ! Positive yaw
                 LocalVar%YawRateDir = 1 
@@ -355,8 +359,19 @@ CONTAINS
                 LocalVar%YawRateDir = 0  
                 LocalVar%YawRate = 0
                 ReStartTime = LocalVar%Time
+
+                ! Restart start timer, TODO: review this, might want to start timers higher in case StartDelay > RestartDelay
+                LocalVar%StElapsedTime = 0
+                StStartTime = LocalVar%Time
             ENDIF
 
+        ENDIF
+
+        ! Stop yawing out when speed < Yaw_StopRegSpeed
+        IF (LocalVar%YawOut) THEN
+            IF (LocalVar%GenSpeedF < (CntrPar%Yaw_StopRegSpeed / RPS2RPM)) THEN
+                LocalVar%YawOut = .FALSE.
+            ENDIF 
         ENDIF
 
         write(403,*) LocalVar%StElapsedTime, CntrPar%Yaw_RegDelay, LocalVar%NacVane, LocalVar%YawRateDir

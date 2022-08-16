@@ -836,6 +836,9 @@ LocalVariables:
     YawRateDir:
       <<: *integer
       description: Commanded yaw direction (-1 or 1) [rad/s].
+    YawOut:
+      <<: *logical
+      description: Are we yawing out to reduce generator speed? 
     IPC_KI:
       <<: *real
       description: Integral gain for IPC, after ramp [-]

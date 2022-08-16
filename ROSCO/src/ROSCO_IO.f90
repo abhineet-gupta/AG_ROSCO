@@ -93,6 +93,7 @@ SUBROUTINE WriteRestartFile(LocalVar, CntrPar, ErrVar, objInst, RootName, size_a
         WRITE( Un, IOSTAT=ErrStat) LocalVar%ReElapsedTime
         WRITE( Un, IOSTAT=ErrStat) LocalVar%YawRate
         WRITE( Un, IOSTAT=ErrStat) LocalVar%YawRateDir
+        WRITE( Un, IOSTAT=ErrStat) LocalVar%YawOut
         WRITE( Un, IOSTAT=ErrStat) LocalVar%IPC_KI(1)
         WRITE( Un, IOSTAT=ErrStat) LocalVar%IPC_KI(2)
         WRITE( Un, IOSTAT=ErrStat) LocalVar%IPC_KP(1)
@@ -180,7 +181,6 @@ SUBROUTINE WriteRestartFile(LocalVar, CntrPar, ErrVar, objInst, RootName, size_a
         WRITE( Un, IOSTAT=ErrStat) LocalVar%piP%ITermLast
         WRITE( Un, IOSTAT=ErrStat) LocalVar%piP%ITerm2
         WRITE( Un, IOSTAT=ErrStat) LocalVar%piP%ITermLast2
-        WRITE( Un, IOSTAT=ErrStat) LocalVar%TiP%StartTime
         WRITE( Un, IOSTAT=ErrStat) objInst%instLPF
         WRITE( Un, IOSTAT=ErrStat) objInst%instSecLPF
         WRITE( Un, IOSTAT=ErrStat) objInst%instHPF
@@ -277,6 +277,7 @@ SUBROUTINE ReadRestartFile(avrSWAP, LocalVar, CntrPar, objInst, PerfData, RootNa
         READ( Un, IOSTAT=ErrStat) LocalVar%ReElapsedTime
         READ( Un, IOSTAT=ErrStat) LocalVar%YawRate
         READ( Un, IOSTAT=ErrStat) LocalVar%YawRateDir
+        READ( Un, IOSTAT=ErrStat) LocalVar%YawOut
         READ( Un, IOSTAT=ErrStat) LocalVar%IPC_KI(1)
         READ( Un, IOSTAT=ErrStat) LocalVar%IPC_KI(2)
         READ( Un, IOSTAT=ErrStat) LocalVar%IPC_KP(1)
@@ -365,7 +366,6 @@ SUBROUTINE ReadRestartFile(avrSWAP, LocalVar, CntrPar, objInst, PerfData, RootNa
         READ( Un, IOSTAT=ErrStat) LocalVar%piP%ITermLast
         READ( Un, IOSTAT=ErrStat) LocalVar%piP%ITerm2
         READ( Un, IOSTAT=ErrStat) LocalVar%piP%ITermLast2
-        READ( Un, IOSTAT=ErrStat) LocalVar%TiP%StartTime
         READ( Un, IOSTAT=ErrStat) objInst%instLPF
         READ( Un, IOSTAT=ErrStat) objInst%instSecLPF
         READ( Un, IOSTAT=ErrStat) objInst%instHPF

@@ -189,10 +189,6 @@ TYPE, PUBLIC :: piParams
     REAL(DbKi), DIMENSION(99)     :: ITermLast2                  ! Previous integrator term - second integrator
 END TYPE piParams
 
-TYPE, PUBLIC :: TimerParams
-    REAL(DbKi), DIMENSION(99)     :: StartTime                   ! Time of last reset
-END TYPE TimerParams
-
 TYPE, PUBLIC :: LocalVariables
     INTEGER(IntKi)                :: iStatus                     ! Initialization status
     REAL(DbKi)                    :: Time                        ! Time [s]
@@ -240,6 +236,7 @@ TYPE, PUBLIC :: LocalVariables
     REAL(DbKi)                    :: ReElapsedTime               ! Elapsed time of start reg timer
     REAL(DbKi)                    :: YawRate                     ! Commanded yaw rate [rad/s].
     INTEGER(IntKi)                :: YawRateDir                  ! Commanded yaw direction (-1 or 1) [rad/s].
+    LOGICAL                       :: YawOut                      ! Are we yawing out to reduce generator speed?
     REAL(DbKi)                    :: IPC_KI(2)                   ! Integral gain for IPC, after ramp [-]
     REAL(DbKi)                    :: IPC_KP(2)                   ! Proportional gain for IPC, after ramp [-]
     INTEGER(IntKi)                :: PC_State                    ! State of the pitch control system
@@ -273,7 +270,6 @@ TYPE, PUBLIC :: LocalVariables
     TYPE(WE)                      :: WE                          ! Wind speed estimator parameters derived type
     TYPE(FilterParameters)        :: FP                          ! Filter parameters derived type
     TYPE(piParams)                :: piP                         ! PI parameters derived type
-    TYPE(TimerParams)             :: TiP                         ! Timer parameters derived type
 END TYPE LocalVariables
 
 TYPE, PUBLIC :: ObjectInstances
