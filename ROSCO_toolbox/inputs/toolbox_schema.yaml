@@ -134,7 +134,7 @@ properties:
             Y_ControlMode:      
                 type: number
                 minimum: 0
-                maximum: 2
+                maximum: 3
                 default: 0
                 description: Yaw control mode (0- no yaw control, 1- yaw rate control, 2- yaw-by-IPC)
             SS_Mode:            

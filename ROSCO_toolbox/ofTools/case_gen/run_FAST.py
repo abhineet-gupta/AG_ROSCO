@@ -213,7 +213,7 @@ if __name__ == "__main__":
         r.wind_case_fcn = cl.power_curve
         r.save_dir      = '/Users/dzalkind/Tools/ROSCO_QED/outputs/QED_YawPlay'
         r.wind_case_opts    = {
-            'TMax': 300.,
+            'TMax': 30.,
             'U': [12],
             }
         # r.control_sweep_fcn = cl.sweep_ps_percent

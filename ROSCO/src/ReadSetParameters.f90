@@ -46,6 +46,7 @@ CONTAINS
         LocalVar%rootMOOP(1)        = avrSWAP(30)
         LocalVar%rootMOOP(2)        = avrSWAP(31)
         LocalVar%rootMOOP(3)        = avrSWAP(32)
+        LocalVar%NacHeading         = avrSWAP(37) * R2D
         LocalVar%FA_Acc             = avrSWAP(53)
         LocalVar%NacIMU_FA_Acc      = avrSWAP(83)
         LocalVar%Azimuth            = avrSWAP(60)
@@ -625,9 +626,9 @@ CONTAINS
         ENDIF
 
         ! Y_ControlMode
-        IF ((CntrPar%Y_ControlMode < 0) .OR. (CntrPar%Y_ControlMode > 2)) THEN
+        IF ((CntrPar%Y_ControlMode < 0) .OR. (CntrPar%Y_ControlMode > 3)) THEN
             ErrVar%aviFAIL = -1
-            ErrVar%ErrMsg  = 'Y_ControlMode must be 0, 1 or 2.'
+            ErrVar%ErrMsg  = 'Y_ControlMode must be 0, 1, 2, or 3.'
         ENDIF
 
         IF ((CntrPar%IPC_ControlMode > 0) .AND. (CntrPar%Y_ControlMode > 1)) THEN
@@ -1015,7 +1016,7 @@ CONTAINS
             ErrVar%ErrMsg  = 'Pitch angle actuator not requested.'
         ENDIF
         
-        IF (NINT(avrSWAP(28)) == 0 .AND. ((CntrPar%IPC_ControlMode > 0) .OR. (CntrPar%Y_ControlMode > 1))) THEN
+        IF (NINT(avrSWAP(28)) == 0 .AND. ((CntrPar%IPC_ControlMode > 0) .OR. (CntrPar%Y_ControlMode == 2))) THEN
             ErrVar%aviFAIL = -1
             ErrVar%ErrMsg  = 'IPC enabled, but Ptch_Cntrl in ServoDyn has a value of 0. Set it to 1.'
         ENDIF

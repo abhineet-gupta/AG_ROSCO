@@ -189,6 +189,10 @@ TYPE, PUBLIC :: piParams
     REAL(DbKi), DIMENSION(99)     :: ITermLast2                  ! Previous integrator term - second integrator
 END TYPE piParams
 
+TYPE, PUBLIC :: TimerParams
+    REAL(DbKi), DIMENSION(99)     :: StartTime                   ! Time of last reset
+END TYPE TimerParams
+
 TYPE, PUBLIC :: LocalVariables
     INTEGER(IntKi)                :: iStatus                     ! Initialization status
     REAL(DbKi)                    :: Time                        ! Time [s]
@@ -196,8 +200,8 @@ TYPE, PUBLIC :: LocalVariables
     REAL(DbKi)                    :: VS_GenPwr                   ! Generator power [W]
     REAL(DbKi)                    :: GenSpeed                    ! Generator speed (HSS) [rad/s]
     REAL(DbKi)                    :: RotSpeed                    ! Rotor speed (LSS) [rad/s]
-    REAL(DbKi)                    :: NacHeading                  ! Nacelle heading of the turbine w.r.t. north [deg]
     REAL(DbKi)                    :: NacVane                     ! Nacelle vane angle [deg]
+    REAL(DbKi)                    :: NacHeading                  ! (Record 37) Nacelle yaw angle from North (deg) [ \f$ u\%YawAngle - p\%NacYaw\_North \f$ ] Converted to deg when avrSWAP read
     REAL(DbKi)                    :: HorWindV                    ! Hub height wind speed m/s
     REAL(DbKi)                    :: rootMOOP(3)                 ! Blade root bending moment [Nm]
     REAL(DbKi)                    :: rootMOOPF(3)                ! Filtered Blade root bending moment [Nm]
@@ -232,6 +236,10 @@ TYPE, PUBLIC :: LocalVariables
     REAL(DbKi)                    :: IPC_AxisYaw_1P              ! Integral of quadrature, 1P
     REAL(DbKi)                    :: IPC_AxisTilt_2P             ! Integral of the direct axis, 2P
     REAL(DbKi)                    :: IPC_AxisYaw_2P              ! Integral of quadrature, 2P
+    REAL(DbKi)                    :: StElapsedTime               ! Elapsed time of start reg timer
+    REAL(DbKi)                    :: ReElapsedTime               ! Elapsed time of start reg timer
+    REAL(DbKi)                    :: YawRate                     ! Commanded yaw rate [rad/s].
+    INTEGER(IntKi)                :: YawRateDir                  ! Commanded yaw direction (-1 or 1) [rad/s].
     REAL(DbKi)                    :: IPC_KI(2)                   ! Integral gain for IPC, after ramp [-]
     REAL(DbKi)                    :: IPC_KP(2)                   ! Proportional gain for IPC, after ramp [-]
     INTEGER(IntKi)                :: PC_State                    ! State of the pitch control system
@@ -265,6 +273,7 @@ TYPE, PUBLIC :: LocalVariables
     TYPE(WE)                      :: WE                          ! Wind speed estimator parameters derived type
     TYPE(FilterParameters)        :: FP                          ! Filter parameters derived type
     TYPE(piParams)                :: piP                         ! PI parameters derived type
+    TYPE(TimerParams)             :: TiP                         ! Timer parameters derived type
 END TYPE LocalVariables
 
 TYPE, PUBLIC :: ObjectInstances
@@ -304,7 +313,6 @@ TYPE, PUBLIC :: DebugVariables
     REAL(DbKi)                    :: axisYaw_1P                  ! Yaw component of coleman transformation, 1P
     REAL(DbKi)                    :: axisTilt_2P                 ! Tilt component of coleman transformation, 2P
     REAL(DbKi)                    :: axisYaw_2P                  ! Yaw component of coleman transformation, 2P
-    REAL(DbKi)                    :: YawRateCom                  ! Commanded yaw rate [rad/s].
     REAL(DbKi)                    :: NacHeadingTarget            ! Target nacelle heading [rad].
     REAL(DbKi)                    :: NacVaneOffset               ! Nacelle vane angle with offset [rad].
     REAL(DbKi)                    :: Yaw_err                     ! Yaw error [rad].

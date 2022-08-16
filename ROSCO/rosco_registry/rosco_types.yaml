@@ -710,12 +710,12 @@ LocalVariables:
     RotSpeed: 
       <<: *real 
       description: Rotor speed (LSS) [rad/s]
-    NacHeading: 
-      <<: *real 
-      description:  Nacelle heading of the turbine w.r.t. north [deg]
     NacVane: 
       <<: *real 
       description:  Nacelle vane angle [deg]
+    NacHeading:
+      <<: *real
+      description:  (Record 37) Nacelle yaw angle from North (deg) [ \f$ u\%YawAngle - p\%NacYaw\_North \f$ ] Converted to deg when avrSWAP read
     HorWindV: 
       <<: *real 
       description: Hub height wind speed m/s
@@ -824,6 +824,18 @@ LocalVariables:
     IPC_AxisYaw_2P:
       <<: *real
       description: Integral of quadrature, 2P
+    StElapsedTime:
+      <<: *real
+      description: Elapsed time of start reg timer
+    ReElapsedTime:
+      <<: *real
+      description: Elapsed time of start reg timer
+    YawRate:
+      <<: *real
+      description: Commanded yaw rate [rad/s].
+    YawRateDir:
+      <<: *integer
+      description: Commanded yaw direction (-1 or 1) [rad/s].
     IPC_KI:
       <<: *real
       description: Integral gain for IPC, after ramp [-]
@@ -1037,9 +1049,6 @@ DebugVariables:
     <<: *real
     description: Yaw component of coleman transformation, 2P
 
-  YawRateCom:
-    <<: *real
-    description: Commanded yaw rate [rad/s].
   NacHeadingTarget:
     <<: *real
     description: Target nacelle heading [rad].

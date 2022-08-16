@@ -251,14 +251,12 @@ CONTAINS
     END SUBROUTINE VariableSpeedControl
 
 !-------------------------------------------------------------------------------------------------------------------------------
-    SUBROUTINE YawSpeedRegulation(avrSWAP, CntrPar, LocalVar, objInst, zmqVar, DebugVar, ErrVar)
+    SUBROUTINE YawSpeedRegulation(avrSWAP, CntrPar, LocalVar, objInst, DebugVar, ErrVar)
         ! Yaw rate controller
-        !       Y_ControlMode = 0, No yaw control
-        !       Y_ControlMode = 1, Yaw rate control using yaw drive
+        !       Y_ControlMode = 0, 1, YawRateControl No yaw control
+        !       Y_ControlMode = 2, this YawSpeedRegulation routine
 
-        ! TODO: Lots of R2D->D2R, this should be cleaned up.
-        ! TODO: The constant offset implementation is sort of circular here as a setpoint is already being defined in SetVariablesSetpoints. This could also use cleanup
-        USE ROSCO_Types, ONLY : ControlParameters, LocalVariables, ObjectInstances, DebugVariables, ErrorVariables, ZMQ_Variables
+        USE ROSCO_Types, ONLY : ControlParameters, LocalVariables, ObjectInstances, DebugVariables, ErrorVariables
     
         REAL(C_FLOAT), INTENT(INOUT) :: avrSWAP(*) ! The swap array, used to pass data to, and receive data from, the DLL controller.
     
@@ -267,22 +265,107 @@ CONTAINS
         TYPE(ObjectInstances), INTENT(INOUT)      :: objInst
         TYPE(DebugVariables), INTENT(INOUT)       :: DebugVar
         TYPE(ErrorVariables), INTENT(INOUT)       :: ErrVar
-        TYPE(ZMQ_Variables), INTENT(INOUT)  :: zmqVar
 
-        ! Allocate Variables
-        REAL(DbKi), SAVE :: NacVaneOffset                          ! For offset control
-        INTEGER, SAVE :: YawState                               ! Yawing left(-1), right(1), or stopped(0)
-        REAL(DbKi)       :: WindDir                                ! Instantaneous wind dind direction, equal to turbine nacelle heading plus the measured vane angle (deg)
-        REAL(DbKi)       :: WindDirPlusOffset                     ! Instantaneous wind direction minus the assigned vane offset (deg)
-        REAL(DbKi)       :: WindDirPlusOffsetCosF                 ! Time-filtered x-component of WindDirPlusOffset (deg)
-        REAL(DbKi)       :: WindDirPlusOffsetSinF                 ! Time-filtered y-component of WindDirPlusOffset (deg)
-        REAL(DbKi)       :: NacHeadingTarget                       ! Time-filtered wind direction minus the assigned vane offset (deg)
-        REAL(DbKi), SAVE :: NacHeadingError                        ! Yaw error (deg)
-        REAL(DbKi)       :: YawRateCom                             ! Commanded yaw rate (deg/s)
-        REAL(DbKi)       :: deadband                               ! Allowable yaw error deadband (deg)
-        REAL(DbKi)       :: Time                                   ! Current time
-        INTEGER, SAVE :: Tidx                                   ! Index i: commanded yaw error is interpolated between i and i+1
+        ! ! Allocate Variables
+        ! REAL(DbKi), SAVE :: NacVaneOffset                          ! For offset control
+        ! INTEGER, SAVE :: YawState                               ! Yawing left(-1), right(1), or stopped(0)
+        ! REAL(DbKi)       :: WindDir                                ! Instantaneous wind dind direction, equal to turbine nacelle heading plus the measured vane angle (deg)
+        ! REAL(DbKi)       :: WindDirPlusOffset                     ! Instantaneous wind direction minus the assigned vane offset (deg)
+        ! REAL(DbKi)       :: WindDirPlusOffsetCosF                 ! Time-filtered x-component of WindDirPlusOffset (deg)
+        ! REAL(DbKi)       :: WindDirPlusOffsetSinF                 ! Time-filtered y-component of WindDirPlusOffset (deg)
+        ! REAL(DbKi)       :: NacHeadingTarget                       ! Time-filtered wind direction minus the assigned vane offset (deg)
+        ! REAL(DbKi), SAVE :: NacHeadingError                        ! Yaw error (deg)
+        ! REAL(DbKi)       :: YawRateCom                             ! Commanded yaw rate (deg/s)
+        ! REAL(DbKi)       :: deadband                               ! Allowable yaw error deadband (deg)
+        ! REAL(DbKi)       :: Time                                   ! Current time
+        ! INTEGER, SAVE :: Tidx                                   ! Index i: commanded yaw error is interpolated between i and i+1
 
+        REAL(DbKi), SAVE         :: StStartTime, EndTime, ReStartTime        ! Start time
+        REAL(DbKi), SAVE         :: PrevHeading        
+
+        ! Initialize
+        IF (LocalVar%iStatus == 0) THEN
+            LocalVar%StElapsedTime = 0_DbKi
+            LocalVar%ReElapsedTime = 99999_DbKi
+            ReStartTime = -99999_DbKi
+            
+            PrevHeading = LocalVar%NacHeading
+            LocalVar%YawRateDir = 0_DbKi
+            LocalVar%YawRate = 0_DbKi
+        ENDIF
+
+        ! WRITE(400, *) LocalVar%GenSpeedF, CntrPar%Yaw_StartRegSpeed / RPS2RPM, StStartTime, LocalVar%StElapsedTime, LocalVar%iStatus
+        
+        LocalVar%ReElapsedTime = LocalVar%Time - ReStartTime   ! Increment restart timer
+        
+        IF (LocalVar%ReElapsedTime > CntrPar%Yaw_RestartDelay) THEN
+
+            IF (LocalVar%GenSpeedF > (CntrPar%Yaw_StartRegSpeed / RPS2RPM) ) THEN
+                ! Start timer
+                IF (LocalVar%YawRateDir == 0) THEN
+                    LocalVar%StElapsedTime = LocalVar%Time - StStartTime
+                ENDIF
+
+            ELSE ! Reset timers
+                LocalVar%StElapsedTime = 0
+                StStartTime = LocalVar%Time
+            ENDIF
+        ENDIF
+
+        ! Start yaw maneuver
+        IF (LocalVar%StElapsedTime > CntrPar%Yaw_RegDelay) THEN
+            ! Yaw out, direction depends on heading 
+            IF (LocalVar%NacVane < 0) THEN      ! TODO: check vane behavior
+                ! Positive yaw
+                LocalVar%YawRateDir = 1 
+            ELSE
+                ! Negative yaw
+                LocalVar%YawRateDir = -1  
+            ENDIF
+            LocalVar%StElapsedTime = 0
+        ENDIF
+
+        write(402,*) LocalVar%StElapsedTime, CntrPar%Yaw_RegDelay, LocalVar%NacVane, LocalVar%YawRateDir
+
+        ! Yaw maneuver
+        write(401,*) LocalVar%NacHeading, PrevHeading, CntrPar%Yaw_OutAngle
+        IF (LocalVar%YawRateDir == 0) THEN
+            PrevHeading = LocalVar%NacHeading
+
+        ELSEIF (LocalVar%YawRateDir > 0) THEN
+            LocalVar%YawRate = CntrPar%Yaw_OutSpeed
+
+            IF (LocalVar%NacHeading - PrevHeading > CntrPar%Yaw_OutAngle) THEN
+                ! Stop yawing
+                LocalVar%YawRateDir = 0  
+                LocalVar%YawRate = 0
+                ReStartTime = LocalVar%Time
+
+                ! Restart start timer, TODO: review this, might want to start timers higher in case StartDelay > RestartDelay
+                LocalVar%StElapsedTime = 0
+                StStartTime = LocalVar%Time
+            ENDIF
+
+
+        ELSEIF (LocalVar%YawRateDir < 0) THEN
+            LocalVar%YawRate =  -CntrPar%Yaw_OutSpeed
+
+            IF (LocalVar%NacHeading - PrevHeading < -CntrPar%Yaw_OutAngle) THEN
+                ! Stop yawing
+                LocalVar%YawRateDir = 0  
+                LocalVar%YawRate = 0
+                ReStartTime = LocalVar%Time
+            ENDIF
+
+        ENDIF
+
+        write(403,*) LocalVar%StElapsedTime, CntrPar%Yaw_RegDelay, LocalVar%NacVane, LocalVar%YawRateDir
+
+
+        ! Output yaw rate command in rad/s
+        avrSWAP(48) = LocalVar%YawRate * D2R
+
+    END SUBROUTINE YawSpeedRegulation
 
 !-------------------------------------------------------------------------------------------------------------------------------
     SUBROUTINE YawRateControl(avrSWAP, CntrPar, LocalVar, objInst, zmqVar, DebugVar, ErrVar)
@@ -393,7 +476,7 @@ CONTAINS
             avrSWAP(48) = YawRateCom * D2R
 
             ! Save for debug
-            DebugVar%YawRateCom       = YawRateCom
+            LocalVar%YawRate       = YawRateCom
             DebugVar%NacHeadingTarget = NacHeadingTarget
             DebugVar%NacVaneOffset    = NacVaneOffset
             DebugVar%YawState         = YawState
