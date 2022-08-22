@@ -50,4 +50,4 @@ controller_params:
     VS_SpdTqFile: /Users/dzalkind/Tools/ROSCO_QED/Test_Cases/QED/spd_trq_gen.dat
     Yaw_OutAngle: 5
     Yaw_RegDelay: 5
-    Yaw_RestartDelay: 2.5
+    Yaw_RestartDelay: 20

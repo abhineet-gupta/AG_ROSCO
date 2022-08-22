@@ -299,7 +299,8 @@ CONTAINS
         
         LocalVar%ReElapsedTime = LocalVar%Time - ReStartTime   ! Increment restart timer
         
-        IF (LocalVar%GenSpeedF > (CntrPar%Yaw_StartRegSpeed / RPS2RPM) ) THEN
+        ! Start regulation trigger
+        IF ((LocalVar%GenSpeedF > (CntrPar%Yaw_StartRegSpeed / RPS2RPM) ) .AND. (.NOT. LocalVar%YawOut) ) THEN
             ! Start timer
             IF (LocalVar%YawRateDir == 0) THEN
                 LocalVar%StElapsedTime = LocalVar%Time - StStartTime
@@ -308,9 +309,6 @@ CONTAINS
         ELSE ! Reset timers
             LocalVar%StElapsedTime = 0
             StStartTime = LocalVar%Time
-
-            LocalVar%ReElapsedTime = 0
-            ReStartTime = LocalVar%Time
            
         ENDIF
 
@@ -332,7 +330,7 @@ CONTAINS
         write(402,*) LocalVar%StElapsedTime, CntrPar%Yaw_RegDelay, LocalVar%NacVane, LocalVar%YawRateDir
 
         ! Yaw maneuver
-        write(401,*) LocalVar%NacHeading, PrevHeading, CntrPar%Yaw_OutAngle
+        write(401,*) LocalVar%NacHeading, PrevHeading, CntrPar%Yaw_OutAngle, TYPE(LocalVar%YawOut,IntKi)
         IF (LocalVar%YawRateDir == 0) THEN
             PrevHeading = LocalVar%NacHeading
 
@@ -345,9 +343,6 @@ CONTAINS
                 LocalVar%YawRate = 0
                 ReStartTime = LocalVar%Time
 
-                ! Restart start timer, TODO: review this, might want to start timers higher in case StartDelay > RestartDelay
-                LocalVar%StElapsedTime = 0
-                StStartTime = LocalVar%Time
             ENDIF
 
 
@@ -359,10 +354,6 @@ CONTAINS
                 LocalVar%YawRateDir = 0  
                 LocalVar%YawRate = 0
                 ReStartTime = LocalVar%Time
-
-                ! Restart start timer, TODO: review this, might want to start timers higher in case StartDelay > RestartDelay
-                LocalVar%StElapsedTime = 0
-                StStartTime = LocalVar%Time
             ENDIF
 
         ENDIF
