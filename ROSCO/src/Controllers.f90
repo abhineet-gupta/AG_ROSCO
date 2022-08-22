@@ -330,7 +330,7 @@ CONTAINS
         write(402,*) LocalVar%StElapsedTime, CntrPar%Yaw_RegDelay, LocalVar%NacVane, LocalVar%YawRateDir
 
         ! Yaw maneuver
-        write(401,*) LocalVar%NacHeading, PrevHeading, CntrPar%Yaw_OutAngle, TYPE(LocalVar%YawOut,IntKi)
+        write(401,*) LocalVar%NacHeading, PrevHeading, CntrPar%Yaw_OutAngle
         IF (LocalVar%YawRateDir == 0) THEN
             PrevHeading = LocalVar%NacHeading
 
