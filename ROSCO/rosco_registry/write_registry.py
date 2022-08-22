@@ -183,7 +183,7 @@ def write_roscoio(yfile):
     file.write('    INTEGER(IntKi), INTENT(IN)      :: size_avcOUTNAME\n')
     file.write('    INTEGER(IntKi)                  :: I , nDebugOuts, nLocalVars   ! Generic index.\n')
     file.write('    CHARACTER(1), PARAMETER         :: Tab = CHAR(9)                ! The tab character.\n')
-    file.write('    CHARACTER(29), PARAMETER        :: FmtDat = "(F20.5,TR5,99(ES20.5E2,TR5:))"   ! The format of the debugging data\n')
+    file.write('    CHARACTER(29), PARAMETER        :: FmtDat =  "(F20.5,TR5,99(ES21.5E3,TR5:))"   ! The format of the debugging data\n')
     file.write('    INTEGER(IntKi), SAVE            :: UnDb                         ! I/O unit for the debugging information\n')
     file.write('    INTEGER(IntKi), SAVE            :: UnDb2                        ! I/O unit for the debugging information, avrSWAP\n')
     file.write('    INTEGER(IntKi), SAVE            :: UnDb3                        ! I/O unit for the debugging information, avrSWAP\n')
