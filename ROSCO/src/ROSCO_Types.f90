@@ -27,6 +27,11 @@ TYPE, PUBLIC :: ControlParameters
     REAL(DbKi)                    :: Yaw_OutSpeed                ! Yaw out by this speed [deg/s]
     REAL(DbKi)                    :: Yaw_RestartDelay            ! After yaw moves, wait Yaw_RestartDelay before re-checking and repeating yaw-out [sec]
     REAL(DbKi)                    :: Yaw_StopRegSpeed            ! Stop regulating when generator speed < Yaw_StopRegSpeed
+    REAL(DbKi)                    :: Fault_Speed                 ! Rotor speed to trigger fault
+    REAL(DbKi)                    :: Fault_Delay                 ! Wait this long to trigger fault after Fault_Speed
+    REAL(DbKi)                    :: Fault_Yaw                   ! Angle to yaw to after Fault_Delay
+    REAL(DbKi)                    :: Fault_YawSpeed              ! Yaw speed to yaw to Fault_Yaw
+    REAL(DbKi)                    :: Fault_BrakeTime             ! Wait this long to engage brakes
     INTEGER(IntKi)                :: TD_Mode                     ! Tower damper mode (0- no tower damper, 1- feed back translational nacelle accelleration to pitch angle
     REAL(DbKi)                    :: FA_HPFCornerFreq            ! Corner frequency (-3dB point) in the high-pass filter on the fore-aft acceleration signal [rad/s]
     REAL(DbKi)                    :: FA_IntSat                   ! Integrator saturation (maximum signal amplitude contrbution to pitch from FA damper), [rad]
@@ -260,6 +265,10 @@ TYPE, PUBLIC :: LocalVariables
     REAL(DbKi)                    :: VS_LastGenTrqF              ! Differentiated integrated wind speed quantity for estimation [m/s]
     LOGICAL                       :: SD                          ! Shutdown, .FALSE. if inactive, .TRUE. if active
     REAL(DbKi)                    :: Fl_PitCom                   ! Shutdown, .FALSE. if inactive, .TRUE. if active
+    LOGICAL                       :: Fault                       ! Is turbine in fault mode after high overspeed
+    LOGICAL                       :: Fault_Brake                 ! Enable timer to engage brake after fault
+    REAL(DbKi)                    :: Fault_Timer                 ! Time elapsed since fault was triggered
+    REAL(DbKi)                    :: Fault_BrakeTimer            ! Time elapsed since fault was triggered
     REAL(DbKi)                    :: NACIMU_FA_AccF              ! None
     REAL(DbKi)                    :: FA_AccF                     ! None
     REAL(DbKi)                    :: Flp_Angle(3)                ! Flap Angle (rad)

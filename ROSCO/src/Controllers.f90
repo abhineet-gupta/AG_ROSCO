@@ -236,6 +236,11 @@ CONTAINS
             ENDIF
         ENDIF
 
+        ! Check for fault, disable generator if true
+        IF (LocalVar%Fault) THEN
+            LocalVar%GenTq = 0_DbKi
+        ENDIF
+
         ! Reset the value of LocalVar%VS_LastGenTrq to the current values:
         LocalVar%VS_LastGenTrq = LocalVar%GenTq
         LocalVar%VS_LastGenPwr = LocalVar%VS_GenPwr
@@ -317,7 +322,7 @@ CONTAINS
             (LocalVar%ReElapsedTime > CntrPar%Yaw_RestartDelay) .AND. LocalVar%YawOut ) THEN
             ! Yaw out, direction depends on heading 
             LocalVar%YawOut = .TRUE.        ! Get into yaw out state, where restart delay is active
-            IF (LocalVar%NacVane < 0) THEN      ! TODO: check vane behavior
+            IF (LocalVar%NacVane < 0) THEN  
                 ! Positive yaw
                 LocalVar%YawRateDir = 1 
             ELSE
@@ -328,34 +333,57 @@ CONTAINS
         ENDIF
 
         write(402,*) LocalVar%StElapsedTime, CntrPar%Yaw_RegDelay, LocalVar%NacVane, LocalVar%YawRateDir
+        ! write(401,*) LocalVar%NacHeading, PrevHeading, CntrPar%Yaw_OutAngle
 
         ! Yaw maneuver
-        write(401,*) LocalVar%NacHeading, PrevHeading, CntrPar%Yaw_OutAngle
-        IF (LocalVar%YawRateDir == 0) THEN
-            PrevHeading = LocalVar%NacHeading
+        IF (LocalVar%Fault) THEN
 
-        ELSEIF (LocalVar%YawRateDir > 0) THEN
-            LocalVar%YawRate = CntrPar%Yaw_OutSpeed
+            ! Yaw out of the wind based on the current NacVane
+            IF (LocalVar%NacVane < 0) THEN  
+                ! Positive yaw
+                LocalVar%YawRateDir = 1 
+            ELSE
+                ! Negative yaw
+                LocalVar%YawRateDir = -1  
+            ENDIF
 
-            IF (LocalVar%NacHeading - PrevHeading > CntrPar%Yaw_OutAngle) THEN
+            LocalVar%YawRate = LocalVar%YawRateDir * CntrPar%Fault_YawSpeed
+
+            IF (((LocalVar%YawRateDir > 0) .AND. (LocalVar%NacHeading > CntrPar%Fault_Yaw)) .OR. &
+                ((LocalVar%YawRateDir < 0) .AND. (LocalVar%NacHeading < -CntrPar%Fault_Yaw))) THEN
                 ! Stop yawing
                 LocalVar%YawRateDir = 0  
                 LocalVar%YawRate = 0
-                ReStartTime = LocalVar%Time
-
             ENDIF
 
 
-        ELSEIF (LocalVar%YawRateDir < 0) THEN
-            LocalVar%YawRate =  -CntrPar%Yaw_OutSpeed
+        ELSE    ! Normal yaw speed regulation
+            IF (LocalVar%YawRateDir == 0) THEN
+                PrevHeading = LocalVar%NacHeading
 
-            IF (LocalVar%NacHeading - PrevHeading < -CntrPar%Yaw_OutAngle) THEN
-                ! Stop yawing
-                LocalVar%YawRateDir = 0  
-                LocalVar%YawRate = 0
-                ReStartTime = LocalVar%Time
+            ELSEIF (LocalVar%YawRateDir > 0) THEN
+                LocalVar%YawRate = CntrPar%Yaw_OutSpeed
+
+                IF (LocalVar%NacHeading - PrevHeading > CntrPar%Yaw_OutAngle) THEN
+                    ! Stop yawing
+                    LocalVar%YawRateDir = 0  
+                    LocalVar%YawRate = 0
+                    ReStartTime = LocalVar%Time
+
+                ENDIF
+
+
+            ELSEIF (LocalVar%YawRateDir < 0) THEN
+                LocalVar%YawRate =  -CntrPar%Yaw_OutSpeed
+
+                IF (LocalVar%NacHeading - PrevHeading < -CntrPar%Yaw_OutAngle) THEN
+                    ! Stop yawing
+                    LocalVar%YawRateDir = 0  
+                    LocalVar%YawRate = 0
+                    ReStartTime = LocalVar%Time
+                ENDIF
+
             ENDIF
-
         ENDIF
 
         ! Stop yawing out when speed < Yaw_StopRegSpeed
@@ -374,6 +402,43 @@ CONTAINS
     END SUBROUTINE YawSpeedRegulation
 
 !-------------------------------------------------------------------------------------------------------------------------------
+
+SUBROUTINE CheckFault(CntrPar, LocalVar)
+        ! Check generator speed for fault
+
+        USE ROSCO_Types, ONLY : ControlParameters, LocalVariables
+    
+    
+        TYPE(ControlParameters), INTENT(INOUT)    :: CntrPar
+        TYPE(LocalVariables), INTENT(INOUT)       :: LocalVar
+
+
+        REAL(DbKi), SAVE         :: StStartTime, EndTime, ReStartTime        ! Start time
+        REAL(DbKi), SAVE         :: PrevHeading        
+
+        ! Initialize
+        IF (LocalVar%iStatus == 0) THEN
+            LocalVar%Fault = .FALSE.
+            LocalVar%Fault_Timer = 0_DbKi
+        ENDIF
+        
+        ! Fault trigger
+        IF (LocalVar%GenSpeedF > (CntrPar%Fault_Speed / RPS2RPM) ) THEN
+            LocalVar%Fault_Timer = LocalVar%Fault_Timer + LocalVar%DT
+
+        ELSE ! Reset timer
+            LocalVar%Fault_Timer = 0_DbKi
+           
+        ENDIF
+
+        IF (LocalVar%Fault_Timer > CntrPar%Fault_Delay) THEN
+            LocalVar%Fault = .TRUE.
+        ENDIF
+
+    END SUBROUTINE CheckFault
+
+!-------------------------------------------------------------------------------------------------------------------------------
+
     SUBROUTINE YawRateControl(avrSWAP, CntrPar, LocalVar, objInst, zmqVar, DebugVar, ErrVar)
         ! Yaw rate controller
         !       Y_ControlMode = 0, No yaw control

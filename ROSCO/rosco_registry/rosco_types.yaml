@@ -123,6 +123,23 @@ ControlParameters:
     Yaw_StopRegSpeed:
       <<: *real
       description: Stop regulating when generator speed < Yaw_StopRegSpeed
+
+    # Fault Settings
+    Fault_Speed:
+      <<: *real
+      description: Rotor speed to trigger fault
+    Fault_Delay:
+      <<: *real
+      description: Wait this long to trigger fault after Fault_Speed
+    Fault_Yaw:
+      <<: *real
+      description: Angle to yaw to after Fault_Delay
+    Fault_YawSpeed:
+      <<: *real
+      description: Yaw speed to yaw to Fault_Yaw
+    Fault_BrakeTime:
+      <<: *real
+      description: Wait this long to engage brakes    
     
     # Tower fore-aft damping
     TD_Mode:
@@ -912,6 +929,18 @@ LocalVariables:
     Fl_PitCom:                           
       <<: *real 
       description: Shutdown, .FALSE. if inactive, .TRUE. if active
+    Fault:
+      <<: *logical
+      description: Is turbine in fault mode after high overspeed
+    Fault_Brake:
+      <<: *logical
+      description: Enable timer to engage brake after fault
+    Fault_Timer:
+      <<: *real
+      description: Time elapsed since fault was triggered
+    Fault_BrakeTimer:
+      <<: *real
+      description: Time elapsed since fault was triggered
     NACIMU_FA_AccF:
       <<: *real 
     FA_AccF:

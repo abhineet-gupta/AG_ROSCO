@@ -123,6 +123,10 @@ SUBROUTINE WriteRestartFile(LocalVar, CntrPar, ErrVar, objInst, RootName, size_a
         WRITE( Un, IOSTAT=ErrStat) LocalVar%VS_LastGenTrqF
         WRITE( Un, IOSTAT=ErrStat) LocalVar%SD
         WRITE( Un, IOSTAT=ErrStat) LocalVar%Fl_PitCom
+        WRITE( Un, IOSTAT=ErrStat) LocalVar%Fault
+        WRITE( Un, IOSTAT=ErrStat) LocalVar%Fault_Brake
+        WRITE( Un, IOSTAT=ErrStat) LocalVar%Fault_Timer
+        WRITE( Un, IOSTAT=ErrStat) LocalVar%Fault_BrakeTimer
         WRITE( Un, IOSTAT=ErrStat) LocalVar%NACIMU_FA_AccF
         WRITE( Un, IOSTAT=ErrStat) LocalVar%FA_AccF
         WRITE( Un, IOSTAT=ErrStat) LocalVar%Flp_Angle(1)
@@ -307,6 +311,10 @@ SUBROUTINE ReadRestartFile(avrSWAP, LocalVar, CntrPar, objInst, PerfData, RootNa
         READ( Un, IOSTAT=ErrStat) LocalVar%VS_LastGenTrqF
         READ( Un, IOSTAT=ErrStat) LocalVar%SD
         READ( Un, IOSTAT=ErrStat) LocalVar%Fl_PitCom
+        READ( Un, IOSTAT=ErrStat) LocalVar%Fault
+        READ( Un, IOSTAT=ErrStat) LocalVar%Fault_Brake
+        READ( Un, IOSTAT=ErrStat) LocalVar%Fault_Timer
+        READ( Un, IOSTAT=ErrStat) LocalVar%Fault_BrakeTimer
         READ( Un, IOSTAT=ErrStat) LocalVar%NACIMU_FA_AccF
         READ( Un, IOSTAT=ErrStat) LocalVar%FA_AccF
         READ( Un, IOSTAT=ErrStat) LocalVar%Flp_Angle(1)
@@ -393,7 +401,7 @@ SUBROUTINE Debug(LocalVar, CntrPar, DebugVar, ErrVar, avrSWAP, RootName, size_av
     INTEGER(IntKi), INTENT(IN)      :: size_avcOUTNAME
     INTEGER(IntKi)                  :: I , nDebugOuts, nLocalVars   ! Generic index.
     CHARACTER(1), PARAMETER         :: Tab = CHAR(9)                ! The tab character.
-    CHARACTER(29), PARAMETER        :: FmtDat = "(F20.5,TR5,99(ES20.5E2,TR5:))"   ! The format of the debugging data
+    CHARACTER(29), PARAMETER        :: FmtDat = "(F20.5,TR5,99(ES21.5E3,TR5:))"   ! The format of the debugging data
     INTEGER(IntKi), SAVE            :: UnDb                         ! I/O unit for the debugging information
     INTEGER(IntKi), SAVE            :: UnDb2                        ! I/O unit for the debugging information, avrSWAP
     INTEGER(IntKi), SAVE            :: UnDb3                        ! I/O unit for the debugging information, avrSWAP
@@ -443,7 +451,7 @@ SUBROUTINE Debug(LocalVar, CntrPar, DebugVar, ErrVar, avrSWAP, RootName, size_av
                                       '[rad/s]', '[rad/s]', '[m/s]', '[rad]', '[rad]', & 
                                       '', '', '', '', '[rad]', & 
                                       '[rad]', '[rad]', '']
-    nLocalVars = 73
+    nLocalVars = 75
     Allocate(LocalVarOutData(nLocalVars))
     Allocate(LocalVarOutStrings(nLocalVars))
     LocalVarOutData(1) = LocalVar%iStatus
@@ -514,11 +522,13 @@ SUBROUTINE Debug(LocalVar, CntrPar, DebugVar, ErrVar, avrSWAP, RootName, size_av
     LocalVarOutData(66) = LocalVar%WE_VwIdot
     LocalVarOutData(67) = LocalVar%VS_LastGenTrqF
     LocalVarOutData(68) = LocalVar%Fl_PitCom
-    LocalVarOutData(69) = LocalVar%NACIMU_FA_AccF
-    LocalVarOutData(70) = LocalVar%FA_AccF
-    LocalVarOutData(71) = LocalVar%Flp_Angle(1)
-    LocalVarOutData(72) = LocalVar%RootMyb_Last(1)
-    LocalVarOutData(73) = LocalVar%ACC_INFILE_SIZE
+    LocalVarOutData(69) = LocalVar%Fault_Timer
+    LocalVarOutData(70) = LocalVar%Fault_BrakeTimer
+    LocalVarOutData(71) = LocalVar%NACIMU_FA_AccF
+    LocalVarOutData(72) = LocalVar%FA_AccF
+    LocalVarOutData(73) = LocalVar%Flp_Angle(1)
+    LocalVarOutData(74) = LocalVar%RootMyb_Last(1)
+    LocalVarOutData(75) = LocalVar%ACC_INFILE_SIZE
     LocalVarOutStrings = [CHARACTER(15) ::  'iStatus', 'Time', 'DT', 'VS_GenPwr', 'GenSpeed', & 
                                       'RotSpeed', 'NacVane', 'NacHeading', 'HorWindV', 'rootMOOP', & 
                                       'rootMOOPF', 'BlPitch', 'Azimuth', 'NumBl', 'FA_Acc', & 
@@ -532,8 +542,9 @@ SUBROUTINE Debug(LocalVar, CntrPar, DebugVar, ErrVar, avrSWAP, RootName, size_av
                                       'PitComAct', 'SS_DelOmegaF', 'TestType', 'VS_MaxTq', 'VS_LastGenTrq', & 
                                       'VS_LastGenPwr', 'VS_MechGenPwr', 'VS_SpdErrAr', 'VS_SpdErrBr', 'VS_SpdErr', & 
                                       'VS_State', 'VS_Rgn3Pitch', 'WE_Vw', 'WE_Vw_F', 'WE_VwI', & 
-                                      'WE_VwIdot', 'VS_LastGenTrqF', 'Fl_PitCom', 'NACIMU_FA_AccF', 'FA_AccF', & 
-                                      'Flp_Angle', 'RootMyb_Last', 'ACC_INFILE_SIZE']
+                                      'WE_VwIdot', 'VS_LastGenTrqF', 'Fl_PitCom', 'Fault_Timer', 'Fault_BrakeTimer', & 
+                                      'NACIMU_FA_AccF', 'FA_AccF', 'Flp_Angle', 'RootMyb_Last', 'ACC_INFILE_SIZE' & 
+                                     ]
     ! Initialize debug file
     IF ((LocalVar%iStatus == 0) .OR. (LocalVar%iStatus == -9))  THEN ! .TRUE. if we're on the first call to the DLL
         IF (CntrPar%LoggingLevel > 0) THEN

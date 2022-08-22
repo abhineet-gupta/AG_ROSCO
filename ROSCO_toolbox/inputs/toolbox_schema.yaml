@@ -556,6 +556,22 @@ properties:
                     Yaw_StopRegSpeed:
                         type: number
                         description: Stop regulating when generator speed < Yaw_StopRegSpeed
+                    # Fault Settings
+                    Fault_Speed:
+                        type: number
+                        description: Rotor speed to trigger fault
+                    Fault_Delay:
+                        type: number
+                        description: Wait this long to trigger fault after Fault_Speed
+                    Fault_Yaw:
+                        type: number
+                        description: Angle to yaw to after Fault_Delay
+                    Fault_YawSpeed:
+                        type: number
+                        description: Yaw speed to yaw to Fault_Yaw
+                    Fault_BrakeTime:
+                        type: number
+                        description: Wait this long to engage brakes    
                     PC_GS_n:
                         type: number
                         description: Amount of gain-scheduling table entries

@@ -276,6 +276,15 @@ CONTAINS
         CALL ParseInput(UnControllerParameters,CurLine,'Yaw_StopRegSpeed',accINFILE(1),CntrPar%Yaw_StopRegSpeed,ErrVar)
         CALL ReadEmptyLine(UnControllerParameters,CurLine)
 
+        !------- FAULT OPTIONS ----------------------------------------------
+        CALL ReadEmptyLine(UnControllerParameters,CurLine)
+        CALL ParseInput(UnControllerParameters,CurLine,'Fault_Speed',accINFILE(1),CntrPar%Fault_Speed,ErrVar)
+        CALL ParseInput(UnControllerParameters,CurLine,'Fault_Delay',accINFILE(1),CntrPar%Fault_Delay,ErrVar)
+        CALL ParseInput(UnControllerParameters,CurLine,'Fault_Yaw',accINFILE(1),CntrPar%Fault_Yaw,ErrVar)
+        CALL ParseInput(UnControllerParameters,CurLine,'Fault_YawSpeed',accINFILE(1),CntrPar%Fault_YawSpeed,ErrVar)
+        CALL ParseInput(UnControllerParameters,CurLine,'Fault_BrakeTime',accINFILE(1),CntrPar%Fault_BrakeTime,ErrVar)
+        CALL ReadEmptyLine(UnControllerParameters,CurLine)
+
         !----------- BLADE PITCH CONTROLLER CONSTANTS -----------
         CALL ReadEmptyLine(UnControllerParameters,CurLine)
         CALL ParseInput(UnControllerParameters,CurLine,'PC_GS_n',accINFILE(1),CntrPar%PC_GS_n,ErrVar)

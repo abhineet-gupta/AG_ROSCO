@@ -105,6 +105,13 @@ def write_DISCON(turbine, controller, param_file='DISCON.IN', txt_filename='Cp_C
     file.write('{:<13.5f}           ! Yaw_RestartDelay  - After yaw moves, wait Yaw_RestartDelay before re-checking and repeating yaw-out [sec]\n'.format(rosco_vt['Yaw_RestartDelay']))
     file.write('{:<13.5f}           ! Yaw_StopRegSpeed  - Stop regulating when generator speed < Yaw_StopRegSpeed\n'.format(rosco_vt['Yaw_StopRegSpeed']))
     file.write('\n')
+    file.write('!------- FAULT OPTIONS ----------------------------------------------\n')     
+    file.write('{:<13.5f}           ! Fault_Speed	- Rotor speed to trigger fault [rpm] \n'.format(rosco_vt['Fault_Speed']))
+    file.write('{:<13.5f}           ! Fault_Delay		- Wait this long to trigger fault after Fault_Speed [sec] \n'.format(rosco_vt['Fault_Delay']))
+    file.write('{:<13.5f}           ! Fault_Yaw		- Angle to yaw to after Fault_Delay [deg] \n'.format(rosco_vt['Fault_Yaw']))
+    file.write('{:<13.5f}           ! Fault_YawSpeed      - Yaw speed to yaw to Fault_Yaw [deg/s]\n'.format(rosco_vt['Fault_YawSpeed']))
+    file.write('{:<13.5f}           ! Fault_BrakeTime  - Wait this long to engage brakes after yaw out\n'.format(rosco_vt['Fault_BrakeTime']))
+    file.write('\n')
     file.write('!------- BLADE PITCH CONTROL ----------------------------------------------\n')
     file.write('{:<11d}         ! PC_GS_n			- Amount of gain-scheduling table entries\n'.format(int(rosco_vt['PC_GS_n'])))
     file.write('{}              ! PC_GS_angles	    - Gain-schedule table: pitch angles [rad].\n'.format(''.join('{:<4.6f}  '.format(rosco_vt['PC_GS_angles'][i]) for i in range(len(rosco_vt['PC_GS_angles'])))))            
@@ -430,6 +437,13 @@ def DISCON_dict(turbine, controller, txt_filename=None):
     DISCON_dict['Yaw_OutSpeed']         = 1.5
     DISCON_dict['Yaw_RestartDelay']     = 10
     DISCON_dict['Yaw_StopRegSpeed']     = 72
+
+    # -------- FAULT OPTIONS ----------
+    DISCON_dict['Fault_Speed']          = 85
+    DISCON_dict['Fault_Delay']          = 0.1
+    DISCON_dict['Fault_Yaw']            = 90
+    DISCON_dict['Fault_YawSpeed']       = 5   
+    DISCON_dict['Fault_BrakeTime']      = 10
 
     # ------- BLADE PITCH CONTROL -------
     DISCON_dict['PC_GS_n']			= len(controller.pitch_op_pc)

@@ -211,13 +211,13 @@ if __name__ == "__main__":
         # QED Power curve
         r.tuning_yaml   = 'QED.yaml'
         r.wind_case_fcn = cl.power_curve
-        r.save_dir      = '/Users/dzalkind/Tools/ROSCO_QED/outputs/QED_Yaw_1'
+        r.save_dir      = '/Users/dzalkind/Tools/ROSCO_QED/outputs/QED_Fault_1'
         r.wind_case_opts    = {
             'TMax': 600.,
-            # 'U': [12],
+            'U': [14],
             }
         # r.control_sweep_fcn = cl.sweep_ps_percent
-        r.n_cores = 8
+        r.n_cores = 1
 
     else:
         raise Exception('This simulation configuration is not supported.')
