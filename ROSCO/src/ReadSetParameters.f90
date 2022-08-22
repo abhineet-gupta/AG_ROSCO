@@ -419,6 +419,7 @@ CONTAINS
         ! Fix Paths (add relative paths if called from another dir)
         IF (PathIsRelative(CntrPar%PerfFileName)) CntrPar%PerfFileName = TRIM(PriPath)//TRIM(CntrPar%PerfFileName)
         IF (PathIsRelative(CntrPar%OL_Filename)) CntrPar%OL_Filename = TRIM(PriPath)//TRIM(CntrPar%OL_Filename)
+        IF (PathIsRelative(CntrPar%VS_SpdTqFile)) CntrPar%VS_SpdTqFile = TRIM(PriPath)//TRIM(CntrPar%VS_SpdTqFile)
         
         ! Read torque-speed curve, if desired
         IF (CntrPar%VS_ControlMode == 4) THEN
