@@ -285,6 +285,12 @@ CONTAINS
         CALL ParseInput(UnControllerParameters,CurLine,'Fault_BrakeTime',accINFILE(1),CntrPar%Fault_BrakeTime,ErrVar)
         CALL ReadEmptyLine(UnControllerParameters,CurLine)
 
+        CALL ReadEmptyLine(UnControllerParameters,CurLine)
+        CALL ParseInput(UnControllerParameters,CurLine,'Dump_StartSpeed',accINFILE(1),CntrPar%Dump_StartSpeed,ErrVar)
+        CALL ParseInput(UnControllerParameters,CurLine,'Dump_Window',accINFILE(1),CntrPar%Dump_Window,ErrVar)
+        CALL ParseInput(UnControllerParameters,CurLine,'Dump_MaxTq',accINFILE(1),CntrPar%Dump_MaxTq,ErrVar)
+        CALL ReadEmptyLine(UnControllerParameters,CurLine)
+
         !----------- BLADE PITCH CONTROLLER CONSTANTS -----------
         CALL ReadEmptyLine(UnControllerParameters,CurLine)
         CALL ParseInput(UnControllerParameters,CurLine,'PC_GS_n',accINFILE(1),CntrPar%PC_GS_n,ErrVar)

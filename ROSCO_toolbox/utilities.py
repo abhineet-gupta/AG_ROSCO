@@ -111,6 +111,12 @@ def write_DISCON(turbine, controller, param_file='DISCON.IN', txt_filename='Cp_C
     file.write('{:<13.5f}           ! Fault_Yaw		- Angle to yaw to after Fault_Delay [deg] \n'.format(rosco_vt['Fault_Yaw']))
     file.write('{:<13.5f}           ! Fault_YawSpeed      - Yaw speed to yaw to Fault_Yaw [deg/s]\n'.format(rosco_vt['Fault_YawSpeed']))
     file.write('{:<13.5f}           ! Fault_BrakeTime  - Wait this long to engage brakes after yaw out\n'.format(rosco_vt['Fault_BrakeTime']))
+    file.write('{:<13.5f}           ! Fault_BrakeTq     - Brake torque applied after yaw out\n'.format(rosco_vt['Fault_BrakeTq']))
+    file.write('\n')
+    file.write('!------- DUMP LOAD REGULATOR ----------------------------------------------\n')
+    file.write('{:<13.5f}           ! Dump_StartSpeed   - Speed to start dump regulation (rpm)\n'.format(rosco_vt['Dump_StartSpeed']))
+    file.write('{:<13.5f}           ! Dump_Window       - Dump torque increases from 0 to 100% of Dump_MaxTq from Dump_StartSpeed to Dump_StartSpeed + Dump_Window (rpm)\n'.format(rosco_vt['Dump_Window']))
+    file.write('{:<13.5f}           ! Dump_MaxTq       - Maximum dump brake torque (Nm)\n'.format(rosco_vt['Dump_MaxTq']))
     file.write('\n')
     file.write('!------- BLADE PITCH CONTROL ----------------------------------------------\n')
     file.write('{:<11d}         ! PC_GS_n			- Amount of gain-scheduling table entries\n'.format(int(rosco_vt['PC_GS_n'])))
@@ -444,6 +450,13 @@ def DISCON_dict(turbine, controller, txt_filename=None):
     DISCON_dict['Fault_Yaw']            = 90
     DISCON_dict['Fault_YawSpeed']       = 5   
     DISCON_dict['Fault_BrakeTime']      = 10
+    DISCON_dict['Fault_BrakeTq']        =  28116.2
+    
+    # --------- DUMP LOAD REGULATOR -----------
+    DISCON_dict['Dump_StartSpeed'] =    420
+    DISCON_dict['Dump_Window'] =    420
+    DISCON_dict['Dump_MaxTq'] =    28116.2
+    
 
     # ------- BLADE PITCH CONTROL -------
     DISCON_dict['PC_GS_n']			= len(controller.pitch_op_pc)

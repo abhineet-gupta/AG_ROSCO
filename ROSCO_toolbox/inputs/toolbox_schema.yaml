@@ -572,6 +572,18 @@ properties:
                     Fault_BrakeTime:
                         type: number
                         description: Wait this long to engage brakes    
+                    Fault_BrakeTq:
+                        type: number
+                        description: Brake torque applied after yaw out
+                    Dump_StartSpeed:
+                        type: number
+                        description: Speed to start dump regulation (rpm)
+                    Dump_Window:
+                        type: number
+                        description: Dump torque increases from 0 to 100% of Dump_MaxTq from Dump_StartSpeed to Dump_StartSpeed + Dump_Window (rpm)
+                    Dump_MaxTq:
+                        type: number
+                        description: Maximum dump torque (Nm)
                     PC_GS_n:
                         type: number
                         description: Amount of gain-scheduling table entries

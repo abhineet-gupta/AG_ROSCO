@@ -139,7 +139,29 @@ ControlParameters:
       description: Yaw speed to yaw to Fault_Yaw
     Fault_BrakeTime:
       <<: *real
-      description: Wait this long to engage brakes    
+      description: Wait this long to engage brakes   
+    Fault_BrakeTq:
+      <<: *real
+      description: Brake torque applied after yaw out
+
+    # Dump regulator settings
+    Dump_StartSpeed:
+      <<: *real
+      description: Speed to start dump regulation (rpm)
+    Dump_Window:
+      <<: *real
+      description: Dump torque increases from 0 to 100% of Dump_MaxTq from Dump_StartSpeed to Dump_StartSpeed + Dump_Window (rpm)
+    Dump_MaxTq:
+      <<: *real
+      description: Maximum dump torque (Nm)
+    Dump_TqTable:
+      <<: *real
+      description: Table of torques [0, Dump_MaxTq]
+      size: 2
+    Dump_SpdTable:
+      <<: *real
+      description: Table of dump speeds [Dump_StartSpeed, Dump_StartSpeed + Dump_Window]
+      size: 2
     
     # Tower fore-aft damping
     TD_Mode:
@@ -941,6 +963,9 @@ LocalVariables:
     Fault_BrakeTimer:
       <<: *real
       description: Time elapsed since fault was triggered
+    Dump_TqC:
+      <<: *real
+      description: Dump torque brake command
     NACIMU_FA_AccF:
       <<: *real 
     FA_AccF:

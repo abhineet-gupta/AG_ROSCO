@@ -32,6 +32,12 @@ TYPE, PUBLIC :: ControlParameters
     REAL(DbKi)                    :: Fault_Yaw                   ! Angle to yaw to after Fault_Delay
     REAL(DbKi)                    :: Fault_YawSpeed              ! Yaw speed to yaw to Fault_Yaw
     REAL(DbKi)                    :: Fault_BrakeTime             ! Wait this long to engage brakes
+    REAL(DbKi)                    :: Fault_BrakeTq               ! Brake torque applied after yaw out
+    REAL(DbKi)                    :: Dump_StartSpeed             ! Speed to start dump regulation (rpm)
+    REAL(DbKi)                    :: Dump_Window                 ! Dump torque increases from 0 to 100% of Dump_MaxTq from Dump_StartSpeed to Dump_StartSpeed + Dump_Window (rpm)
+    REAL(DbKi)                    :: Dump_MaxTq                  ! Maximum dump torque (Nm)
+    REAL(DbKi)                    :: Dump_TqTable(2)             ! Table of torques [0, Dump_MaxTq]
+    REAL(DbKi)                    :: Dump_SpdTable(2)            ! Table of dump speeds [Dump_StartSpeed, Dump_StartSpeed + Dump_Window]
     INTEGER(IntKi)                :: TD_Mode                     ! Tower damper mode (0- no tower damper, 1- feed back translational nacelle accelleration to pitch angle
     REAL(DbKi)                    :: FA_HPFCornerFreq            ! Corner frequency (-3dB point) in the high-pass filter on the fore-aft acceleration signal [rad/s]
     REAL(DbKi)                    :: FA_IntSat                   ! Integrator saturation (maximum signal amplitude contrbution to pitch from FA damper), [rad]
@@ -269,6 +275,7 @@ TYPE, PUBLIC :: LocalVariables
     INTEGER(IntKi)                :: Fault_Brake                 ! 0 - no need to brake, 1 - timer active, 2 - brake enabled after Fault_BrakeTimer
     REAL(DbKi)                    :: Fault_Timer                 ! Time elapsed since fault was triggered
     REAL(DbKi)                    :: Fault_BrakeTimer            ! Time elapsed since fault was triggered
+    REAL(DbKi)                    :: Dump_TqC                    ! Dump torque brake command
     REAL(DbKi)                    :: NACIMU_FA_AccF              ! None
     REAL(DbKi)                    :: FA_AccF                     ! None
     REAL(DbKi)                    :: Flp_Angle(3)                ! Flap Angle (rad)
