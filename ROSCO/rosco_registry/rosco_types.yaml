@@ -933,8 +933,8 @@ LocalVariables:
       <<: *logical
       description: Is turbine in fault mode after high overspeed
     Fault_Brake:
-      <<: *logical
-      description: Enable timer to engage brake after fault
+      <<: *integer
+      description: 0 - no need to brake, 1 - timer active, 2 - brake enabled after Fault_BrakeTimer
     Fault_Timer:
       <<: *real
       description: Time elapsed since fault was triggered

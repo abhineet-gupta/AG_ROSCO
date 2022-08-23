@@ -401,7 +401,7 @@ SUBROUTINE Debug(LocalVar, CntrPar, DebugVar, ErrVar, avrSWAP, RootName, size_av
     INTEGER(IntKi), INTENT(IN)      :: size_avcOUTNAME
     INTEGER(IntKi)                  :: I , nDebugOuts, nLocalVars   ! Generic index.
     CHARACTER(1), PARAMETER         :: Tab = CHAR(9)                ! The tab character.
-    CHARACTER(29), PARAMETER        :: FmtDat = "(F20.5,TR5,99(ES21.5E3,TR5:))"   ! The format of the debugging data
+    CHARACTER(29), PARAMETER        :: FmtDat =  "(F20.5,TR5,99(ES21.5E3,TR5:))"   ! The format of the debugging data
     INTEGER(IntKi), SAVE            :: UnDb                         ! I/O unit for the debugging information
     INTEGER(IntKi), SAVE            :: UnDb2                        ! I/O unit for the debugging information, avrSWAP
     INTEGER(IntKi), SAVE            :: UnDb3                        ! I/O unit for the debugging information, avrSWAP
@@ -451,7 +451,7 @@ SUBROUTINE Debug(LocalVar, CntrPar, DebugVar, ErrVar, avrSWAP, RootName, size_av
                                       '[rad/s]', '[rad/s]', '[m/s]', '[rad]', '[rad]', & 
                                       '', '', '', '', '[rad]', & 
                                       '[rad]', '[rad]', '']
-    nLocalVars = 75
+    nLocalVars = 76
     Allocate(LocalVarOutData(nLocalVars))
     Allocate(LocalVarOutStrings(nLocalVars))
     LocalVarOutData(1) = LocalVar%iStatus
@@ -522,13 +522,14 @@ SUBROUTINE Debug(LocalVar, CntrPar, DebugVar, ErrVar, avrSWAP, RootName, size_av
     LocalVarOutData(66) = LocalVar%WE_VwIdot
     LocalVarOutData(67) = LocalVar%VS_LastGenTrqF
     LocalVarOutData(68) = LocalVar%Fl_PitCom
-    LocalVarOutData(69) = LocalVar%Fault_Timer
-    LocalVarOutData(70) = LocalVar%Fault_BrakeTimer
-    LocalVarOutData(71) = LocalVar%NACIMU_FA_AccF
-    LocalVarOutData(72) = LocalVar%FA_AccF
-    LocalVarOutData(73) = LocalVar%Flp_Angle(1)
-    LocalVarOutData(74) = LocalVar%RootMyb_Last(1)
-    LocalVarOutData(75) = LocalVar%ACC_INFILE_SIZE
+    LocalVarOutData(69) = LocalVar%Fault_Brake
+    LocalVarOutData(70) = LocalVar%Fault_Timer
+    LocalVarOutData(71) = LocalVar%Fault_BrakeTimer
+    LocalVarOutData(72) = LocalVar%NACIMU_FA_AccF
+    LocalVarOutData(73) = LocalVar%FA_AccF
+    LocalVarOutData(74) = LocalVar%Flp_Angle(1)
+    LocalVarOutData(75) = LocalVar%RootMyb_Last(1)
+    LocalVarOutData(76) = LocalVar%ACC_INFILE_SIZE
     LocalVarOutStrings = [CHARACTER(15) ::  'iStatus', 'Time', 'DT', 'VS_GenPwr', 'GenSpeed', & 
                                       'RotSpeed', 'NacVane', 'NacHeading', 'HorWindV', 'rootMOOP', & 
                                       'rootMOOPF', 'BlPitch', 'Azimuth', 'NumBl', 'FA_Acc', & 
@@ -542,25 +543,25 @@ SUBROUTINE Debug(LocalVar, CntrPar, DebugVar, ErrVar, avrSWAP, RootName, size_av
                                       'PitComAct', 'SS_DelOmegaF', 'TestType', 'VS_MaxTq', 'VS_LastGenTrq', & 
                                       'VS_LastGenPwr', 'VS_MechGenPwr', 'VS_SpdErrAr', 'VS_SpdErrBr', 'VS_SpdErr', & 
                                       'VS_State', 'VS_Rgn3Pitch', 'WE_Vw', 'WE_Vw_F', 'WE_VwI', & 
-                                      'WE_VwIdot', 'VS_LastGenTrqF', 'Fl_PitCom', 'Fault_Timer', 'Fault_BrakeTimer', & 
-                                      'NACIMU_FA_AccF', 'FA_AccF', 'Flp_Angle', 'RootMyb_Last', 'ACC_INFILE_SIZE' & 
-                                     ]
+                                      'WE_VwIdot', 'VS_LastGenTrqF', 'Fl_PitCom', 'Fault_Brake', 'Fault_Timer', & 
+                                      'Fault_BrakeTimer', 'NACIMU_FA_AccF', 'FA_AccF', 'Flp_Angle', 'RootMyb_Last', & 
+                                      'ACC_INFILE_SIZE']
     ! Initialize debug file
     IF ((LocalVar%iStatus == 0) .OR. (LocalVar%iStatus == -9))  THEN ! .TRUE. if we're on the first call to the DLL
         IF (CntrPar%LoggingLevel > 0) THEN
             CALL GetNewUnit(UnDb, ErrVar)
             OPEN(unit=UnDb, FILE=TRIM(RootName)//'.RO.dbg')
             WRITE(UnDb, *)  'Generated on '//CurDate()//' at '//CurTime()//' using ROSCO-'//TRIM(rosco_version)
-            WRITE(UnDb, '(99(a20,TR5:))') 'Time',   DebugOutStrings
-            WRITE(UnDb, '(99(a20,TR5:))') '(sec)',  DebugOutUnits
+            WRITE(UnDb, '(99(a21,TR5:))') 'Time',   DebugOutStrings
+            WRITE(UnDb, '(99(a21,TR5:))') '(sec)',  DebugOutUnits
         END IF
 
         IF (CntrPar%LoggingLevel > 1) THEN
             CALL GetNewUnit(UnDb2, ErrVar)
             OPEN(unit=UnDb2, FILE=TRIM(RootName)//'.RO.dbg2')
             WRITE(UnDb2, *)  'Generated on '//CurDate()//' at '//CurTime()//' using ROSCO-'//TRIM(rosco_version)
-            WRITE(UnDb2, '(99(a20,TR5:))') 'Time',   LocalVarOutStrings
-            WRITE(UnDb2, '(99(a20,TR5:))')
+            WRITE(UnDb2, '(99(a21,TR5:))') 'Time',   LocalVarOutStrings
+            WRITE(UnDb2, '(99(a21,TR5:))')
         END IF
 
         IF (CntrPar%LoggingLevel > 2) THEN

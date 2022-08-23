@@ -265,8 +265,8 @@ def write_roscoio(yfile):
     file.write("            CALL GetNewUnit(UnDb, ErrVar)\n")
     file.write("            OPEN(unit=UnDb, FILE=TRIM(RootName)//'.RO.dbg')\n")
     file.write("            WRITE(UnDb, *)  'Generated on '//CurDate()//' at '//CurTime()//' using ROSCO-'//TRIM(rosco_version)\n")
-    file.write("            WRITE(UnDb, '(99(a20,TR5:))') 'Time',   DebugOutStrings\n")
-    file.write("            WRITE(UnDb, '(99(a20,TR5:))') '(sec)',  DebugOutUnits\n")
+    file.write("            WRITE(UnDb, '(99(a21,TR5:))') 'Time',   DebugOutStrings\n")
+    file.write("            WRITE(UnDb, '(99(a21,TR5:))') '(sec)',  DebugOutUnits\n")
     file.write("        END IF\n")
     file.write("\n")
     # LocalVar debug
@@ -274,8 +274,8 @@ def write_roscoio(yfile):
     file.write("            CALL GetNewUnit(UnDb2, ErrVar)\n")
     file.write("            OPEN(unit=UnDb2, FILE=TRIM(RootName)//'.RO.dbg2')\n")
     file.write("            WRITE(UnDb2, *)  'Generated on '//CurDate()//' at '//CurTime()//' using ROSCO-'//TRIM(rosco_version)\n")
-    file.write("            WRITE(UnDb2, '(99(a20,TR5:))') 'Time',   LocalVarOutStrings\n")
-    file.write("            WRITE(UnDb2, '(99(a20,TR5:))')\n")
+    file.write("            WRITE(UnDb2, '(99(a21,TR5:))') 'Time',   LocalVarOutStrings\n")
+    file.write("            WRITE(UnDb2, '(99(a21,TR5:))')\n")
     file.write("        END IF\n")
     file.write("\n")
     # avrSWAP debug

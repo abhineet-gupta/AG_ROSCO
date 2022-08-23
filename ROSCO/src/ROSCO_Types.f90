@@ -266,7 +266,7 @@ TYPE, PUBLIC :: LocalVariables
     LOGICAL                       :: SD                          ! Shutdown, .FALSE. if inactive, .TRUE. if active
     REAL(DbKi)                    :: Fl_PitCom                   ! Shutdown, .FALSE. if inactive, .TRUE. if active
     LOGICAL                       :: Fault                       ! Is turbine in fault mode after high overspeed
-    LOGICAL                       :: Fault_Brake                 ! Enable timer to engage brake after fault
+    INTEGER(IntKi)                :: Fault_Brake                 ! 0 - no need to brake, 1 - timer active, 2 - brake enabled after Fault_BrakeTimer
     REAL(DbKi)                    :: Fault_Timer                 ! Time elapsed since fault was triggered
     REAL(DbKi)                    :: Fault_BrakeTimer            ! Time elapsed since fault was triggered
     REAL(DbKi)                    :: NACIMU_FA_AccF              ! None

@@ -354,6 +354,8 @@ CONTAINS
                 ! Stop yawing
                 LocalVar%YawRateDir = 0  
                 LocalVar%YawRate = 0
+
+                LocalVar%Fault_Brake = 1_IntKI
             ENDIF
 
 
@@ -403,12 +405,13 @@ CONTAINS
 
 !-------------------------------------------------------------------------------------------------------------------------------
 
-SUBROUTINE CheckFault(CntrPar, LocalVar)
+SUBROUTINE CheckFault(avrSWAP, CntrPar, LocalVar)
         ! Check generator speed for fault
+        ! Also run brake timer, apply brake (move to own sub later)
 
         USE ROSCO_Types, ONLY : ControlParameters, LocalVariables
     
-    
+        REAL(C_FLOAT), INTENT(INOUT) :: avrSWAP(*) ! The swap array, used to pass data to, and receive data from, the DLL controller.
         TYPE(ControlParameters), INTENT(INOUT)    :: CntrPar
         TYPE(LocalVariables), INTENT(INOUT)       :: LocalVar
 
@@ -420,6 +423,8 @@ SUBROUTINE CheckFault(CntrPar, LocalVar)
         IF (LocalVar%iStatus == 0) THEN
             LocalVar%Fault = .FALSE.
             LocalVar%Fault_Timer = 0_DbKi
+            LocalVar%Fault_Brake = 0_IntKi
+            LocalVar%Fault_BrakeTimer = 0_DbKi
         ENDIF
         
         ! Fault trigger
@@ -433,6 +438,23 @@ SUBROUTINE CheckFault(CntrPar, LocalVar)
 
         IF (LocalVar%Fault_Timer > CntrPar%Fault_Delay) THEN
             LocalVar%Fault = .TRUE.
+        ENDIF
+
+        IF (LocalVar%Fault_Brake > 0) THEN
+            LocalVar%Fault_BrakeTimer = LocalVar%Fault_BrakeTimer + LocalVar%DT
+        ENDIF 
+
+        IF (LocalVar%Fault_BrakeTimer > CntrPar%Fault_BrakeTime) THEN
+            LocalVar%Fault_Brake = 2_IntKi
+        ENDIF 
+
+        ! Enable brake (move to own controller later)
+        avrSWAP(36) = 16_IntKi
+        IF (LocalVar%Fault_Brake == 2) THEN
+            
+            avrSWAP(107) = 28116.2_DbKi
+        ELSE
+            avrSWAP(107) = 0_DbKi
         ENDIF
 
     END SUBROUTINE CheckFault
