@@ -179,7 +179,7 @@ class run_FAST_ROSCO():
 if __name__ == "__main__":
 
     # Simulation config
-    sim_config = 14
+    sim_config = 15
     
     r = run_FAST_ROSCO()
 
@@ -211,10 +211,27 @@ if __name__ == "__main__":
         # QED Power curve
         r.tuning_yaml   = 'QED.yaml'
         r.wind_case_fcn = cl.power_curve
-        r.save_dir      = '/Users/dzalkind/Tools/ROSCO_QED/outputs/QED_Fault_1'
+        r.save_dir      = '/Users/dzalkind/Tools/ROSCO_QED/outputs/QED_Dump1'
         r.wind_case_opts    = {
             'TMax': 600.,
             'U': [14],
+            }
+        # r.control_sweep_fcn = cl.sweep_ps_percent
+        r.n_cores = 1
+
+                
+
+    elif sim_config == 15:
+
+        # QED Power curve
+        r.tuning_yaml   = 'QED.yaml'
+        r.wind_case_fcn = r.wind_case_fcn = cl.simp_step
+        r.save_dir      = '/Users/dzalkind/Tools/ROSCO_QED/outputs/QED_Seek1'
+        r.wind_case_opts    = {
+            'U_start': [14],
+            'U_end': [12],
+            'T_step': 100,
+            'wind_dir': '/Users/dzalkind/Projects/BAR/BAR_Designs/BAR_USC/ROSCO_BAR_USC'
             }
         # r.control_sweep_fcn = cl.sweep_ps_percent
         r.n_cores = 1

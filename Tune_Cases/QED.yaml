@@ -48,6 +48,6 @@ controller_params:
 
   DISCON:
     VS_SpdTqFile: /Users/dzalkind/Tools/ROSCO_QED/Test_Cases/QED/spd_trq_gen.dat
-    Yaw_OutAngle: 5
-    Yaw_RegDelay: 5
-    Yaw_RestartDelay: 20
+    Yaw_OutAngle: 2.5
+    Yaw_RegDelay: 2.5
+    Yaw_RestartDelay: 7.5

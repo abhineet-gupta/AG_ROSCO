@@ -10,9 +10,10 @@ if __name__=="__main__":
 
     # paths relative to Tune_Case/ and Test_Case/
     map_rel = {
-        'NREL5MW.yaml': 'NREL-5MW/DISCON.IN',
-        'IEA15MW.yaml': 'IEA-15-240-RWT-UMaineSemi/DISCON-UMaineSemi.IN',
-        'BAR.yaml': 'BAR_10/BAR_10_DISCON.IN'
+        # 'NREL5MW.yaml': 'NREL-5MW/DISCON.IN',
+        # 'IEA15MW.yaml': 'IEA-15-240-RWT-UMaineSemi/DISCON-UMaineSemi.IN',
+        # 'BAR.yaml': 'BAR_10/BAR_10_DISCON.IN'
+        'QED.yaml': 'QED/DISCON.IN'
     }
 
     # Directories
