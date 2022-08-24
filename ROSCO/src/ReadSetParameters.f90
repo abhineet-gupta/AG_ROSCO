@@ -283,8 +283,10 @@ CONTAINS
         CALL ParseInput(UnControllerParameters,CurLine,'Fault_Yaw',accINFILE(1),CntrPar%Fault_Yaw,ErrVar)
         CALL ParseInput(UnControllerParameters,CurLine,'Fault_YawSpeed',accINFILE(1),CntrPar%Fault_YawSpeed,ErrVar)
         CALL ParseInput(UnControllerParameters,CurLine,'Fault_BrakeTime',accINFILE(1),CntrPar%Fault_BrakeTime,ErrVar)
+        CALL ParseInput(UnControllerParameters,CurLine,'Fault_BrakeTq',accINFILE(1),CntrPar%Fault_BrakeTq,ErrVar)
         CALL ReadEmptyLine(UnControllerParameters,CurLine)
 
+        !------- FAULT OPTIONS ----------------------------------------------
         CALL ReadEmptyLine(UnControllerParameters,CurLine)
         CALL ParseInput(UnControllerParameters,CurLine,'Dump_StartSpeed',accINFILE(1),CntrPar%Dump_StartSpeed,ErrVar)
         CALL ParseInput(UnControllerParameters,CurLine,'Dump_Window',accINFILE(1),CntrPar%Dump_Window,ErrVar)
@@ -442,6 +444,13 @@ CONTAINS
             PRINT *, "Reading VS_SpdTqFile: ", TRIM(CntrPar%VS_SpdTqFile)
             CALL Read_OL_Input(CntrPar%VS_SpdTqFile,UnSpdTqFile,2_IntKi,CntrPar%VS_SpdTq, ErrVar)
         ENDIF
+
+        ! Brake lookup table for dump load regulator
+        CntrPar%Dump_TqTable(1) = 0_DbKi
+        CntrPar%Dump_TqTable(2) = CntrPar%Dump_MaxTq
+
+        CntrPar%Dump_SpdTable(1) = CntrPar%Dump_StartSpeed
+        CntrPar%Dump_SpdTable(2) = CntrPar%Dump_StartSpeed + CntrPar%Dump_Window
         
         ! Read open loop input, if desired
         IF (CntrPar%OL_Mode == 1) THEN

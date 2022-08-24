@@ -107,7 +107,8 @@ IF (((LocalVar%iStatus >= 0) .OR. (LocalVar%iStatus <= -8)) .AND. (ErrVar%aviFAI
     CALL StateMachine(CntrPar, LocalVar)
     CALL SetpointSmoother(LocalVar, CntrPar, objInst)
 
-    CALL CheckFault(avrSWAP, CntrPar,LocalVar)
+    CALL CheckFault(CntrPar, LocalVar)
+    CALL BrakeControl(avrSWAP, CntrPar, LocalVar, ErrVar)
 
 
     CALL VariableSpeedControl(avrSWAP, CntrPar, LocalVar, objInst, ErrVar)

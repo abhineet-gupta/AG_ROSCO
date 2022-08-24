@@ -966,6 +966,9 @@ LocalVariables:
     Dump_TqC:
       <<: *real
       description: Dump torque brake command
+    BrakeTqC:
+      <<: *real
+      description: Commanded brake torque (Nm)
     NACIMU_FA_AccF:
       <<: *real 
     FA_AccF:

@@ -450,13 +450,12 @@ def DISCON_dict(turbine, controller, txt_filename=None):
     DISCON_dict['Fault_Yaw']            = 90
     DISCON_dict['Fault_YawSpeed']       = 5   
     DISCON_dict['Fault_BrakeTime']      = 10
-    DISCON_dict['Fault_BrakeTq']        =  28116.2
+    DISCON_dict['Fault_BrakeTq']        = 3000
     
     # --------- DUMP LOAD REGULATOR -----------
-    DISCON_dict['Dump_StartSpeed'] =    420
-    DISCON_dict['Dump_Window'] =    420
-    DISCON_dict['Dump_MaxTq'] =    28116.2
-    
+    DISCON_dict['Dump_StartSpeed']      = 79
+    DISCON_dict['Dump_Window']          = 5
+    DISCON_dict['Dump_MaxTq']           = 3000
 
     # ------- BLADE PITCH CONTROL -------
     DISCON_dict['PC_GS_n']			= len(controller.pitch_op_pc)

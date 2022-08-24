@@ -271,50 +271,29 @@ CONTAINS
         TYPE(DebugVariables), INTENT(INOUT)       :: DebugVar
         TYPE(ErrorVariables), INTENT(INOUT)       :: ErrVar
 
-        ! ! Allocate Variables
-        ! REAL(DbKi), SAVE :: NacVaneOffset                          ! For offset control
-        ! INTEGER, SAVE :: YawState                               ! Yawing left(-1), right(1), or stopped(0)
-        ! REAL(DbKi)       :: WindDir                                ! Instantaneous wind dind direction, equal to turbine nacelle heading plus the measured vane angle (deg)
-        ! REAL(DbKi)       :: WindDirPlusOffset                     ! Instantaneous wind direction minus the assigned vane offset (deg)
-        ! REAL(DbKi)       :: WindDirPlusOffsetCosF                 ! Time-filtered x-component of WindDirPlusOffset (deg)
-        ! REAL(DbKi)       :: WindDirPlusOffsetSinF                 ! Time-filtered y-component of WindDirPlusOffset (deg)
-        ! REAL(DbKi)       :: NacHeadingTarget                       ! Time-filtered wind direction minus the assigned vane offset (deg)
-        ! REAL(DbKi), SAVE :: NacHeadingError                        ! Yaw error (deg)
-        ! REAL(DbKi)       :: YawRateCom                             ! Commanded yaw rate (deg/s)
-        ! REAL(DbKi)       :: deadband                               ! Allowable yaw error deadband (deg)
-        ! REAL(DbKi)       :: Time                                   ! Current time
-        ! INTEGER, SAVE :: Tidx                                   ! Index i: commanded yaw error is interpolated between i and i+1
-
-        REAL(DbKi), SAVE         :: StStartTime, EndTime, ReStartTime        ! Start time
         REAL(DbKi), SAVE         :: PrevHeading        
 
         ! Initialize
         IF (LocalVar%iStatus == 0) THEN
             LocalVar%StElapsedTime = 0_DbKi
             LocalVar%ReElapsedTime = 0_DbKi
-            ReStartTime = 0_DbKi
             
             PrevHeading = LocalVar%NacHeading
             LocalVar%YawRateDir = 0_DbKi
             LocalVar%YawRate = 0_DbKi
             LocalVar%YawOut = .FALSE.
         ENDIF
-
-        ! WRITE(400, *) LocalVar%GenSpeedF, CntrPar%Yaw_StartRegSpeed / RPS2RPM, StStartTime, LocalVar%StElapsedTime, LocalVar%iStatus
         
-        LocalVar%ReElapsedTime = LocalVar%Time - ReStartTime   ! Increment restart timer
         
         ! Start regulation trigger
         IF ((LocalVar%GenSpeedF > (CntrPar%Yaw_StartRegSpeed / RPS2RPM) ) .AND. (.NOT. LocalVar%YawOut) ) THEN
             ! Start timer
             IF (LocalVar%YawRateDir == 0) THEN
-                LocalVar%StElapsedTime = LocalVar%Time - StStartTime
+                LocalVar%StElapsedTime = LocalVar%StElapsedTime + LocalVar%DT
             ENDIF
 
         ELSE ! Reset timers
-            LocalVar%StElapsedTime = 0
-            StStartTime = LocalVar%Time
-           
+            LocalVar%StElapsedTime = 0           
         ENDIF
 
         ! Start yaw maneuver
@@ -365,24 +344,25 @@ CONTAINS
 
             ELSEIF (LocalVar%YawRateDir > 0) THEN
                 LocalVar%YawRate = CntrPar%Yaw_OutSpeed
+                LocalVar%ReElapsedTime = 0
 
                 IF (LocalVar%NacHeading - PrevHeading > CntrPar%Yaw_OutAngle) THEN
                     ! Stop yawing
                     LocalVar%YawRateDir = 0  
                     LocalVar%YawRate = 0
-                    ReStartTime = LocalVar%Time
-
+                    
                 ENDIF
 
 
             ELSEIF (LocalVar%YawRateDir < 0) THEN
                 LocalVar%YawRate =  -CntrPar%Yaw_OutSpeed
+                LocalVar%ReElapsedTime = 0
 
                 IF (LocalVar%NacHeading - PrevHeading < -CntrPar%Yaw_OutAngle) THEN
                     ! Stop yawing
                     LocalVar%YawRateDir = 0  
                     LocalVar%YawRate = 0
-                    ReStartTime = LocalVar%Time
+                    LocalVar%ReElapsedTime = 0
                 ENDIF
 
             ENDIF
@@ -390,8 +370,12 @@ CONTAINS
 
         ! Stop yawing out when speed < Yaw_StopRegSpeed
         IF (LocalVar%YawOut) THEN
+            
+            LocalVar%ReElapsedTime = LocalVar%ReElapsedTime + LocalVar%DT   ! Increment restart timer
+
             IF (LocalVar%GenSpeedF < (CntrPar%Yaw_StopRegSpeed / RPS2RPM)) THEN
                 LocalVar%YawOut = .FALSE.
+                LocalVar%ReElapsedTime = 0_DbKi
             ENDIF 
         ENDIF
 
@@ -405,18 +389,16 @@ CONTAINS
 
 !-------------------------------------------------------------------------------------------------------------------------------
 
-SUBROUTINE CheckFault(avrSWAP, CntrPar, LocalVar)
+SUBROUTINE CheckFault(CntrPar, LocalVar)
         ! Check generator speed for fault
         ! Also run brake timer, apply brake (move to own sub later)
 
         USE ROSCO_Types, ONLY : ControlParameters, LocalVariables
     
-        REAL(C_FLOAT), INTENT(INOUT) :: avrSWAP(*) ! The swap array, used to pass data to, and receive data from, the DLL controller.
         TYPE(ControlParameters), INTENT(INOUT)    :: CntrPar
         TYPE(LocalVariables), INTENT(INOUT)       :: LocalVar
 
 
-        REAL(DbKi), SAVE         :: StStartTime, EndTime, ReStartTime        ! Start time
         REAL(DbKi), SAVE         :: PrevHeading        
 
         ! Initialize
@@ -448,16 +430,48 @@ SUBROUTINE CheckFault(avrSWAP, CntrPar, LocalVar)
             LocalVar%Fault_Brake = 2_IntKi
         ENDIF 
 
-        ! Enable brake (move to own controller later)
-        avrSWAP(36) = 16_IntKi
-        IF (LocalVar%Fault_Brake == 2) THEN
-            
-            avrSWAP(107) = 28116.2_DbKi
-        ELSE
-            avrSWAP(107) = 0_DbKi
-        ENDIF
+        
 
     END SUBROUTINE CheckFault
+
+!-------------------------------------------------------------------------------------------------------------------------------
+
+SUBROUTINE BrakeControl(avrSWAP, CntrPar, LocalVar, ErrVar)
+        ! Check generator speed for fault
+        ! Also run brake timer, apply brake (move to own sub later)
+
+        USE ROSCO_Types, ONLY : ControlParameters, LocalVariables, ErrorVariables
+    
+        REAL(C_FLOAT), INTENT(INOUT) :: avrSWAP(*) ! The swap array, used to pass data to, and receive data from, the DLL controller.
+        TYPE(ControlParameters), INTENT(INOUT)    :: CntrPar
+        TYPE(LocalVariables), INTENT(INOUT)       :: LocalVar
+        TYPE(ErrorVariables), INTENT(INOUT)       :: ErrVar
+
+
+        REAL(DbKi), SAVE         :: PrevHeading        
+
+        ! Initialize
+        IF (LocalVar%iStatus == 0) THEN
+            !
+        ENDIF
+        
+        
+        IF (LocalVar%Fault_Brake == 2) THEN
+            LocalVar%BrakeTqC = CntrPar%Fault_BrakeTq
+        
+        ELSE
+            ! Dump load brake control 
+            LocalVar%BrakeTqC = interp1d(CntrPar%Dump_SpdTable, CntrPar%Dump_TqTable, LocalVar%GenSpeedF * RPS2RPM, ErrVar)
+            
+        ENDIF
+
+        ! Enable brake, set torque
+        avrSWAP(36) = 16_IntKi
+        avrSWAP(107) = LocalVar%BrakeTqC
+
+
+
+    END SUBROUTINE BrakeControl
 
 !-------------------------------------------------------------------------------------------------------------------------------
 

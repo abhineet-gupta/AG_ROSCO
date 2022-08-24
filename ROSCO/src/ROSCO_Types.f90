@@ -276,6 +276,7 @@ TYPE, PUBLIC :: LocalVariables
     REAL(DbKi)                    :: Fault_Timer                 ! Time elapsed since fault was triggered
     REAL(DbKi)                    :: Fault_BrakeTimer            ! Time elapsed since fault was triggered
     REAL(DbKi)                    :: Dump_TqC                    ! Dump torque brake command
+    REAL(DbKi)                    :: BrakeTqC                    ! Commanded brake torque (Nm)
     REAL(DbKi)                    :: NACIMU_FA_AccF              ! None
     REAL(DbKi)                    :: FA_AccF                     ! None
     REAL(DbKi)                    :: Flp_Angle(3)                ! Flap Angle (rad)
