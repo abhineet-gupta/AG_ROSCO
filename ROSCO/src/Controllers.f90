@@ -282,6 +282,8 @@ CONTAINS
             LocalVar%YawRateDir = 0_DbKi
             LocalVar%YawRate = 0_DbKi
             LocalVar%YawOut = .FALSE.
+            LocalVar%Yaw_Seek = 0_IntKi
+            LocalVar%Yaw_SeekTimer = 0_IntKi
         ENDIF
         
         
@@ -296,7 +298,15 @@ CONTAINS
             LocalVar%StElapsedTime = 0           
         ENDIF
 
-        ! Start yaw maneuver
+        ! Check for yaw seek
+        LocalVar%Yaw_SeekTimer = LocalVar%Yaw_SeekTimer + LocalVar%DT
+        IF ((LocalVar%GenSpeedF < (CntrPar%Yaw_SeekRotSpeed / RPS2RPM) ) .AND. (LocalVar%Yaw_SeekTimer > CntrPar%Yaw_SeekDelay))THEN
+            IF (ABS(LocalVar%NacVane) > CntrPar%Yaw_SeekHist) THEN
+                LocalVar%Yaw_Seek = 1
+            ENDIF
+        ENDIF
+
+        ! Start yaw maneuver for speed regulations
         IF ((LocalVar%StElapsedTime > CntrPar%Yaw_RegDelay) .OR.  & 
             (LocalVar%ReElapsedTime > CntrPar%Yaw_RestartDelay) .AND. LocalVar%YawOut ) THEN
             ! Yaw out, direction depends on heading 
@@ -338,33 +348,70 @@ CONTAINS
             ENDIF
 
 
-        ELSE    ! Normal yaw speed regulation
-            IF (LocalVar%YawRateDir == 0) THEN
-                PrevHeading = LocalVar%NacHeading
+        ELSE   
+            IF (LocalVar%YawOut) THEN
+                ! Normal yaw speed regulation
+                IF (LocalVar%YawRateDir == 0) THEN
+                    PrevHeading = LocalVar%NacHeading
 
-            ELSEIF (LocalVar%YawRateDir > 0) THEN
-                LocalVar%YawRate = CntrPar%Yaw_OutSpeed
-                LocalVar%ReElapsedTime = 0
-
-                IF (LocalVar%NacHeading - PrevHeading > CntrPar%Yaw_OutAngle) THEN
-                    ! Stop yawing
-                    LocalVar%YawRateDir = 0  
-                    LocalVar%YawRate = 0
-                    
-                ENDIF
-
-
-            ELSEIF (LocalVar%YawRateDir < 0) THEN
-                LocalVar%YawRate =  -CntrPar%Yaw_OutSpeed
-                LocalVar%ReElapsedTime = 0
-
-                IF (LocalVar%NacHeading - PrevHeading < -CntrPar%Yaw_OutAngle) THEN
-                    ! Stop yawing
-                    LocalVar%YawRateDir = 0  
-                    LocalVar%YawRate = 0
+                ELSEIF (LocalVar%YawRateDir > 0) THEN
+                    LocalVar%YawRate = CntrPar%Yaw_OutSpeed
                     LocalVar%ReElapsedTime = 0
+
+                    IF (LocalVar%NacHeading - PrevHeading > CntrPar%Yaw_OutAngle) THEN
+                        ! Stop yawing
+                        LocalVar%YawRateDir = 0  
+                        LocalVar%YawRate = 0
+                        
+                    ENDIF
+
+
+                ELSEIF (LocalVar%YawRateDir < 0) THEN
+                    LocalVar%YawRate =  -CntrPar%Yaw_OutSpeed
+                    LocalVar%ReElapsedTime = 0
+
+                    IF (LocalVar%NacHeading - PrevHeading < -CntrPar%Yaw_OutAngle) THEN
+                        ! Stop yawing
+                        LocalVar%YawRateDir = 0  
+                        LocalVar%YawRate = 0
+                        LocalVar%ReElapsedTime = 0
+                    ENDIF
+                ENDIF
+            ELSEIF (LocalVar%Yaw_Seek == 1) THEN
+                ! Yaw in to increase speed
+                ! Yaw out of the wind based on the current NacVane
+                IF (LocalVar%NacVane > 0) THEN  
+                    ! Positive yaw
+                    LocalVar%YawRateDir = 1 
+                ELSE
+                    ! Negative yaw
+                    LocalVar%YawRateDir = -1  
                 ENDIF
 
+                LocalVar%YawRate = LocalVar%YawRateDir * CntrPar%Yaw_SeekSpeed
+
+                ! Stop yawing
+                IF (LocalVar%YawRateDir > 0) THEN
+                    IF (LocalVar%NacHeading - PrevHeading > CntrPar%Yaw_OutAngle) THEN
+                        ! Stop yawing
+                        LocalVar%YawRateDir = 0  
+                        LocalVar%YawRate = 0
+                        LocalVar%Yaw_SeekTimer = 0
+                        LocalVar%Yaw_Seek = 0
+                    ENDIF
+
+
+                ELSEIF (LocalVar%YawRateDir < 0) THEN
+                    IF (LocalVar%NacHeading - PrevHeading < -CntrPar%Yaw_OutAngle) THEN
+                        ! Stop yawing
+                        LocalVar%YawRateDir = 0  
+                        LocalVar%YawRate = 0
+                        LocalVar%Yaw_SeekTimer = 0
+                        LocalVar%Yaw_Seek = 0
+                    ENDIF
+                ENDIF
+            ELSE
+                PrevHeading = LocalVar%NacHeading
             ENDIF
         ENDIF
 

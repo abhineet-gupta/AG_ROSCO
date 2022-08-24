@@ -556,6 +556,21 @@ properties:
                     Yaw_StopRegSpeed:
                         type: number
                         description: Stop regulating when generator speed < Yaw_StopRegSpeed
+                    Yaw_SeekRotSpeed:
+                        type: number
+                        description: Start yaw-in when rotor speed < Yaw_SeekRotSpeed (rpm)
+                    Yaw_SeekHist:
+                        type: number
+                        description: Yaw-in if abs(wind vane angle) > Yaw_SeekHist (deg)
+                    Yaw_SeekAngle:
+                        type: number
+                        description: Yaw-in by this amount (deg)
+                    Yaw_SeekSpeed:
+                        type: number
+                        description: Yaw-in at this angular speed (deg/s)
+                    Yaw_SeekDelay:
+                        type: number
+                        description: Restart yaw-in after Yaw_SeekDelay (s)
                     # Fault Settings
                     Fault_Speed:
                         type: number

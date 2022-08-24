@@ -104,6 +104,11 @@ def write_DISCON(turbine, controller, param_file='DISCON.IN', txt_filename='Cp_C
     file.write('{:<13.5f}           ! Yaw_OutSpeed      - Yaw out by this speed [deg/s]\n'.format(rosco_vt['Yaw_OutSpeed']))
     file.write('{:<13.5f}           ! Yaw_RestartDelay  - After yaw moves, wait Yaw_RestartDelay before re-checking and repeating yaw-out [sec]\n'.format(rosco_vt['Yaw_RestartDelay']))
     file.write('{:<13.5f}           ! Yaw_StopRegSpeed  - Stop regulating when generator speed < Yaw_StopRegSpeed\n'.format(rosco_vt['Yaw_StopRegSpeed']))
+    file.write('{:<13.5f}           ! Yaw_SeekRotSpeed  - Start yaw-in when rotor speed < Yaw_SeekRotSpeed (rpm)\n'.format(rosco_vt['Yaw_SeekRotSpeed']))
+    file.write('{:<13.5f}           ! Yaw_SeekHist      - Yaw-in if abs(wind vane angle) > Yaw_SeekHist (deg)\n'.format(rosco_vt['Yaw_SeekHist']))
+    file.write('{:<13.5f}           ! Yaw_SeekAngle     - Yaw-in by this amount (deg)\n'.format(rosco_vt['Yaw_SeekAngle']))
+    file.write('{:<13.5f}           ! Yaw_SeekSpeed     - Yaw-in at this angular speed (deg/s)\n'.format(rosco_vt['Yaw_SeekSpeed']))
+    file.write('{:<13.5f}           ! Yaw_SeekDelay     - Restart yaw-in after Yaw_SeekDelay (s)\n'.format(rosco_vt['Yaw_SeekDelay']))
     file.write('\n')
     file.write('!------- FAULT OPTIONS ----------------------------------------------\n')     
     file.write('{:<13.5f}           ! Fault_Speed	- Rotor speed to trigger fault [rpm] \n'.format(rosco_vt['Fault_Speed']))
@@ -443,6 +448,11 @@ def DISCON_dict(turbine, controller, txt_filename=None):
     DISCON_dict['Yaw_OutSpeed']         = 1.5
     DISCON_dict['Yaw_RestartDelay']     = 10
     DISCON_dict['Yaw_StopRegSpeed']     = 72
+    DISCON_dict['Yaw_SeekRotSpeed']     = 67
+    DISCON_dict['Yaw_SeekHist']         = 10
+    DISCON_dict['Yaw_SeekAngle']        = 3
+    DISCON_dict['Yaw_SeekSpeed']        = 0.75
+    DISCON_dict['Yaw_SeekDelay']        = 20
 
     # -------- FAULT OPTIONS ----------
     DISCON_dict['Fault_Speed']          = 85

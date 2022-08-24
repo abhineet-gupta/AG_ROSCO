@@ -27,6 +27,11 @@ TYPE, PUBLIC :: ControlParameters
     REAL(DbKi)                    :: Yaw_OutSpeed                ! Yaw out by this speed [deg/s]
     REAL(DbKi)                    :: Yaw_RestartDelay            ! After yaw moves, wait Yaw_RestartDelay before re-checking and repeating yaw-out [sec]
     REAL(DbKi)                    :: Yaw_StopRegSpeed            ! Stop regulating when generator speed < Yaw_StopRegSpeed
+    REAL(DbKi)                    :: Yaw_SeekRotSpeed            ! Start yaw-in when rotor speed < Yaw_SeekRotSpeed (rpm)
+    REAL(DbKi)                    :: Yaw_SeekHist                ! Yaw-in if abs(wind vane angle) > Yaw_SeekHist (deg)
+    REAL(DbKi)                    :: Yaw_SeekAngle               ! Yaw-in by this amount (deg)
+    REAL(DbKi)                    :: Yaw_SeekSpeed               ! Yaw-in at this angular speed (deg/s)
+    REAL(DbKi)                    :: Yaw_SeekDelay               ! Restart yaw-in after Yaw_SeekDelay (s)
     REAL(DbKi)                    :: Fault_Speed                 ! Rotor speed to trigger fault
     REAL(DbKi)                    :: Fault_Delay                 ! Wait this long to trigger fault after Fault_Speed
     REAL(DbKi)                    :: Fault_Yaw                   ! Angle to yaw to after Fault_Delay
@@ -248,6 +253,8 @@ TYPE, PUBLIC :: LocalVariables
     REAL(DbKi)                    :: YawRate                     ! Commanded yaw rate [rad/s].
     INTEGER(IntKi)                :: YawRateDir                  ! Commanded yaw direction (-1 or 1) [rad/s].
     LOGICAL                       :: YawOut                      ! Are we yawing out to reduce generator speed?
+    INTEGER(IntKi)                :: Yaw_Seek                    ! In yaw seek mode? 0 - no, 1 - yes
+    REAL(DbKi)                    :: Yaw_SeekTimer               ! Timer for yaw seek
     REAL(DbKi)                    :: IPC_KI(2)                   ! Integral gain for IPC, after ramp [-]
     REAL(DbKi)                    :: IPC_KP(2)                   ! Proportional gain for IPC, after ramp [-]
     INTEGER(IntKi)                :: PC_State                    ! State of the pitch control system

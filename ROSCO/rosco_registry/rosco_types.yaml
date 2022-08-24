@@ -123,6 +123,22 @@ ControlParameters:
     Yaw_StopRegSpeed:
       <<: *real
       description: Stop regulating when generator speed < Yaw_StopRegSpeed
+    Yaw_SeekRotSpeed:
+      <<: *real
+      description: Start yaw-in when rotor speed < Yaw_SeekRotSpeed (rpm)
+    Yaw_SeekHist:
+      <<: *real
+      description: Yaw-in if abs(wind vane angle) > Yaw_SeekHist (deg)
+    Yaw_SeekAngle:
+      <<: *real
+      description: Yaw-in by this amount (deg)
+    Yaw_SeekSpeed:
+      <<: *real
+      description: Yaw-in at this angular speed (deg/s)
+    Yaw_SeekDelay:
+      <<: *real
+      description: Restart yaw-in after Yaw_SeekDelay (s)
+
 
     # Fault Settings
     Fault_Speed:
@@ -878,6 +894,12 @@ LocalVariables:
     YawOut:
       <<: *logical
       description: Are we yawing out to reduce generator speed? 
+    Yaw_Seek:
+      <<: *integer
+      description: In yaw seek mode? 0 - no, 1 - yes
+    Yaw_SeekTimer:
+      <<: *real
+      description: Timer for yaw seek
     IPC_KI:
       <<: *real
       description: Integral gain for IPC, after ramp [-]

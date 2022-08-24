@@ -274,6 +274,11 @@ CONTAINS
         CALL ParseInput(UnControllerParameters,CurLine,'Yaw_OutSpeed',accINFILE(1),CntrPar%Yaw_OutSpeed,ErrVar)
         CALL ParseInput(UnControllerParameters,CurLine,'Yaw_RestartDelay',accINFILE(1),CntrPar%Yaw_RestartDelay,ErrVar)
         CALL ParseInput(UnControllerParameters,CurLine,'Yaw_StopRegSpeed',accINFILE(1),CntrPar%Yaw_StopRegSpeed,ErrVar)
+        CALL ParseInput(UnControllerParameters,CurLine,'Yaw_SeekRotSpeed',accINFILE(1),CntrPar%Yaw_SeekRotSpeed,ErrVar)
+        CALL ParseInput(UnControllerParameters,CurLine,'Yaw_SeekHist',accINFILE(1),CntrPar%Yaw_SeekHist,ErrVar)
+        CALL ParseInput(UnControllerParameters,CurLine,'Yaw_SeekAngle',accINFILE(1),CntrPar%Yaw_SeekAngle,ErrVar)
+        CALL ParseInput(UnControllerParameters,CurLine,'Yaw_SeekSpeed',accINFILE(1),CntrPar%Yaw_SeekSpeed,ErrVar)
+        CALL ParseInput(UnControllerParameters,CurLine,'Yaw_SeekDelay',accINFILE(1),CntrPar%Yaw_SeekDelay,ErrVar)
         CALL ReadEmptyLine(UnControllerParameters,CurLine)
 
         !------- FAULT OPTIONS ----------------------------------------------
