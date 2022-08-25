@@ -1,5 +1,5 @@
 ! Controller parameter input file for the QEDinpu wind turbine
-!    - File written using ROSCO version 2.5.0 controller tuning logic on 08/23/22
+!    - File written using ROSCO version 2.5.0 controller tuning logic on 08/25/22
 
 !------- DEBUG ------------------------------------------------------------
 2                   ! LoggingLevel		- {0: write no debug files, 1: write standard output .dbg-file, 2: LoggingLevel 1 + ROSCO LocalVars (.dbg2) 3: LoggingLevel 2 + complete avrSWAP-array (.dbg3)}
@@ -37,11 +37,16 @@
 
 !------- YAW SPEED REGULATION ----------------------------------------------
 75.00000                ! Yaw_StartRegSpeed	- Speed used to trigger yaw-out speed regulation [rpm] 
-5.00000                 ! Yaw_RegDelay		- Wait Yaw_RegDelay after GenSpeed > Yaw_RegSpeed before yaw-out [sec] 
-5.00000                 ! Yaw_OutAngle		- Yaw out by this angle [deg] 
+2.50000                 ! Yaw_RegDelay		- Wait Yaw_RegDelay after GenSpeed > Yaw_RegSpeed before yaw-out [sec] 
+2.50000                 ! Yaw_OutAngle		- Yaw out by this angle [deg] 
 1.50000                 ! Yaw_OutSpeed      - Yaw out by this speed [deg/s]
-20.00000                ! Yaw_RestartDelay  - After yaw moves, wait Yaw_RestartDelay before re-checking and repeating yaw-out [sec]
+7.50000                 ! Yaw_RestartDelay  - After yaw moves, wait Yaw_RestartDelay before re-checking and repeating yaw-out [sec]
 72.00000                ! Yaw_StopRegSpeed  - Stop regulating when generator speed < Yaw_StopRegSpeed
+67.00000                ! Yaw_SeekRotSpeed  - Start yaw-in when rotor speed < Yaw_SeekRotSpeed (rpm)
+10.00000                ! Yaw_SeekHist      - Yaw-in if abs(wind vane angle) > Yaw_SeekHist (deg)
+3.00000                 ! Yaw_SeekAngle     - Yaw-in by this amount (deg)
+0.75000                 ! Yaw_SeekSpeed     - Yaw-in at this angular speed (deg/s)
+20.00000                ! Yaw_SeekDelay     - Restart yaw-in after Yaw_SeekDelay (s)
 
 !------- FAULT OPTIONS ----------------------------------------------
 85.00000                ! Fault_Speed	- Rotor speed to trigger fault [rpm] 
@@ -49,12 +54,12 @@
 90.00000                ! Fault_Yaw		- Angle to yaw to after Fault_Delay [deg] 
 5.00000                 ! Fault_YawSpeed      - Yaw speed to yaw to Fault_Yaw [deg/s]
 10.00000                ! Fault_BrakeTime  - Wait this long to engage brakes after yaw out
-28116.20000             ! Fault_BrakeTq     - Brake torque applied after yaw out
+3000.00000              ! Fault_BrakeTq     - Brake torque applied after yaw out
 
 !------- DUMP LOAD REGULATOR ----------------------------------------------
-420.00000               ! Dump_StartSpeed   - Speed to start dump regulation (rpm)
-420.00000               ! Dump_Window       - Dump torque increases from 0 to 100% of Dump_MaxTq from Dump_StartSpeed to Dump_StartSpeed + Dump_Window (rpm)
-28116.20000             ! Dump_MaxTq       - Maximum dump brake torque (Nm)
+79.00000                ! Dump_StartSpeed   - Speed to start dump regulation (rpm)
+5.00000                 ! Dump_Window       - Dump torque increases from 0 to 100% of Dump_MaxTq from Dump_StartSpeed to Dump_StartSpeed + Dump_Window (rpm)
+3000.00000              ! Dump_MaxTq       - Maximum dump brake torque (Nm)
 
 !------- BLADE PITCH CONTROL ----------------------------------------------
 30                  ! PC_GS_n			- Amount of gain-scheduling table entries

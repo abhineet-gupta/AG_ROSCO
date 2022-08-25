@@ -463,7 +463,7 @@ def DISCON_dict(turbine, controller, txt_filename=None):
     DISCON_dict['Fault_BrakeTq']        = 3000
     
     # --------- DUMP LOAD REGULATOR -----------
-    DISCON_dict['Dump_StartSpeed']      = 79
+    DISCON_dict['Dump_StartSpeed']      = 77.5
     DISCON_dict['Dump_Window']          = 5
     DISCON_dict['Dump_MaxTq']           = 3000
 
