@@ -218,7 +218,7 @@ CONTAINS
         
         ELSEIF (CntrPar%VS_ControlMode == 4) THEN
         ! Lookup table control based on torque speed curve
-            LocalVar%GenTq = interp1d(CntrPar%VS_SpdTq(:,1),CntrPar%VS_SpdTq(:,2),LocalVar%GenSpeedF,ErrVar)
+            LocalVar%GenTq = interp1d(CntrPar%VS_SpdTq(:,1),CntrPar%VS_SpdTq(:,2),LocalVar%GenSpeedF * RPS2RPM,ErrVar)
         
         ENDIF
 
