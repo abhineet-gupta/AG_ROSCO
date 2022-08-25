@@ -15,6 +15,7 @@ import yaml, os
 from ROSCO_toolbox import turbine as ROSCO_turbine
 from ROSCO_toolbox.utilities import write_rotor_performance
 from ROSCO_toolbox.inputs.validation import load_rosco_yaml
+import matplotlib.pyplot as plt
 # Initialize parameter dictionaries
 turbine_params = {}
 control_params = {}
@@ -27,7 +28,7 @@ if not os.path.isdir(example_out_dir):
 # Load yaml file
 this_dir = os.path.dirname(os.path.abspath(__file__))
 tune_dir =  os.path.join(this_dir,'../Tune_Cases')
-parameter_filename = os.path.join(tune_dir,'NREL5MW.yaml')
+parameter_filename = os.path.join(tune_dir,'QED.yaml')
 inps = load_rosco_yaml(parameter_filename)
 path_params         = inps['path_params']
 turbine_params      = inps['turbine_params']
@@ -42,6 +43,15 @@ turbine.load_from_fast(
     rot_source='cc-blade',
     txt_filename=None)
 
+TSR = turbine.Cp.TSR_initial
+Cp_lambda = turbine.Cp.performance_table[:,1]
+Ct_lambda = turbine.Ct.performance_table[:,1]
+Cq_lambda = turbine.Cq.performance_table[:,1]
+
 # Write rotor performance text file
-txt_filename = os.path.join(example_out_dir,'03_Cp_Ct_Cq.Ex03.txt')
-write_rotor_performance(turbine,txt_filename=txt_filename)
+# txt_filename = os.path.join(example_out_dir,'03_Cp_Ct_Cq.Ex03.txt')
+# write_rotor_performance(turbine,txt_filename=txt_filename)
+plt.plot(TSR,Cp_lambda)
+
+print(Cp_lambda)
+print(TSR)
