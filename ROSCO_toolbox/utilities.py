@@ -98,30 +98,30 @@ def write_DISCON(turbine, controller, param_file='DISCON.IN', txt_filename='Cp_C
     file.write('{}! F_FlpCornerFreq   - Corner frequency and damping in the second order low pass filter of the blade root bending moment for flap control [rad/s, -].\n'.format(''.join('{:<4.6f}  '.format(rosco_vt['F_FlpCornerFreq'][i]) for i in range(len(rosco_vt['F_FlpCornerFreq'])))))
     file.write('\n')
     file.write('!------- YAW SPEED REGULATION ----------------------------------------------\n') 
-    file.write('{:<13.5f}           ! Yaw_StartRegSpeed	- Speed used to trigger yaw-out speed regulation [rpm] \n'.format(rosco_vt['Yaw_StartRegSpeed']))
-    file.write('{:<13.5f}           ! Yaw_RegDelay		- Wait Yaw_RegDelay after GenSpeed > Yaw_RegSpeed before yaw-out [sec] \n'.format(rosco_vt['Yaw_RegDelay']))
-    file.write('{:<13.5f}           ! Yaw_OutAngle		- Yaw out by this angle [deg] \n'.format(rosco_vt['Yaw_OutAngle']))
-    file.write('{:<13.5f}           ! Yaw_OutSpeed      - Yaw out by this speed [deg/s]\n'.format(rosco_vt['Yaw_OutSpeed']))
-    file.write('{:<13.5f}           ! Yaw_RestartDelay  - After yaw moves, wait Yaw_RestartDelay before re-checking and repeating yaw-out [sec]\n'.format(rosco_vt['Yaw_RestartDelay']))
-    file.write('{:<13.5f}           ! Yaw_StopRegSpeed  - Stop regulating when generator speed < Yaw_StopRegSpeed\n'.format(rosco_vt['Yaw_StopRegSpeed']))
-    file.write('{:<13.5f}           ! Yaw_SeekRotSpeed  - Start yaw-in when rotor speed < Yaw_SeekRotSpeed (rpm)\n'.format(rosco_vt['Yaw_SeekRotSpeed']))
-    file.write('{:<13.5f}           ! Yaw_SeekHist      - Yaw-in if abs(wind vane angle) > Yaw_SeekHist (deg)\n'.format(rosco_vt['Yaw_SeekHist']))
-    file.write('{:<13.5f}           ! Yaw_SeekAngle     - Yaw-in by this amount (deg)\n'.format(rosco_vt['Yaw_SeekAngle']))
-    file.write('{:<13.5f}           ! Yaw_SeekSpeed     - Yaw-in at this angular speed (deg/s)\n'.format(rosco_vt['Yaw_SeekSpeed']))
-    file.write('{:<13.5f}           ! Yaw_SeekDelay     - Restart yaw-in after Yaw_SeekDelay (s)\n'.format(rosco_vt['Yaw_SeekDelay']))
+    file.write('{:<13.5f}           ! Yaw_RegStartSpeed	    - Speed used to trigger yaw-out speed regulation [rpm] \n'.format(rosco_vt['Yaw_RegStartSpeed']))
+    file.write('{:<13.5f}           ! Yaw_RegDelay		    - Wait Yaw_RegDelay after GenSpeed > Yaw_RegOutSpeed before yaw-out [sec] \n'.format(rosco_vt['Yaw_RegDelay']))
+    file.write('{:<13.5f}           ! Yaw_RegOutAngle		- Yaw out by this angle [deg] \n'.format(rosco_vt['Yaw_RegOutAngle']))
+    file.write('{:<13.5f}           ! Yaw_RegOutSpeed       - Yaw out by this speed [deg/s]\n'.format(rosco_vt['Yaw_RegOutSpeed']))
+    file.write('{:<13.5f}           ! Yaw_RegRestartDelay   - After yaw moves, wait Yaw_RegRestartDelay before re-checking and repeating yaw-out [sec]\n'.format(rosco_vt['Yaw_RegRestartDelay']))
+    file.write('{:<13.5f}           ! Yaw_StopRegSpeed      - Stop regulating when generator speed < Yaw_StopRegSpeed\n'.format(rosco_vt['Yaw_StopRegSpeed']))
+    file.write('{:<13.5f}           ! Yaw_SeekRotSpeed      - Start yaw-in when rotor speed < Yaw_SeekRotSpeed (rpm)\n'.format(rosco_vt['Yaw_SeekRotSpeed']))
+    file.write('{:<13.5f}           ! Yaw_SeekHist          - Yaw-in if abs(wind vane angle) > Yaw_SeekHist (deg)\n'.format(rosco_vt['Yaw_SeekHist']))
+    file.write('{:<13.5f}           ! Yaw_SeekInAngle       - Yaw-in by this amount (deg)\n'.format(rosco_vt['Yaw_SeekInAngle']))
+    file.write('{:<13.5f}           ! Yaw_SeekInSpeed       - Yaw-in at this angular speed (deg/s)\n'.format(rosco_vt['Yaw_SeekInSpeed']))
+    file.write('{:<13.5f}           ! Yaw_SeekDelay         - Restart yaw-in after Yaw_SeekDelay (s)\n'.format(rosco_vt['Yaw_SeekDelay']))
     file.write('\n')
     file.write('!------- FAULT OPTIONS ----------------------------------------------\n')     
-    file.write('{:<13.5f}           ! Fault_Speed	- Rotor speed to trigger fault [rpm] \n'.format(rosco_vt['Fault_Speed']))
-    file.write('{:<13.5f}           ! Fault_Delay		- Wait this long to trigger fault after Fault_Speed [sec] \n'.format(rosco_vt['Fault_Delay']))
-    file.write('{:<13.5f}           ! Fault_Yaw		- Angle to yaw to after Fault_Delay [deg] \n'.format(rosco_vt['Fault_Yaw']))
-    file.write('{:<13.5f}           ! Fault_YawSpeed      - Yaw speed to yaw to Fault_Yaw [deg/s]\n'.format(rosco_vt['Fault_YawSpeed']))
-    file.write('{:<13.5f}           ! Fault_BrakeTime  - Wait this long to engage brakes after yaw out\n'.format(rosco_vt['Fault_BrakeTime']))
-    file.write('{:<13.5f}           ! Fault_BrakeTq     - Brake torque applied after yaw out\n'.format(rosco_vt['Fault_BrakeTq']))
+    file.write('{:<13.5f}           ! Fault_Speed	        - Rotor speed to trigger fault [rpm] \n'.format(rosco_vt['Fault_Speed']))
+    file.write('{:<13.5f}           ! Fault_Delay		    - Wait this long to trigger fault after Fault_Speed [sec] \n'.format(rosco_vt['Fault_Delay']))
+    file.write('{:<13.5f}           ! Fault_Yaw		        - Angle to yaw to after Fault_Delay [deg] \n'.format(rosco_vt['Fault_Yaw']))
+    file.write('{:<13.5f}           ! Fault_YawSpeed        - Yaw speed to yaw to Fault_Yaw [deg/s]\n'.format(rosco_vt['Fault_YawSpeed']))
+    file.write('{:<13.5f}           ! Fault_BrakeTime       - Wait this long to engage brakes after yaw out\n'.format(rosco_vt['Fault_BrakeTime']))
+    file.write('{:<13.5f}           ! Fault_BrakeTq         - Brake torque applied after yaw out\n'.format(rosco_vt['Fault_BrakeTq']))
     file.write('\n')
     file.write('!------- DUMP LOAD REGULATOR ----------------------------------------------\n')
-    file.write('{:<13.5f}           ! Dump_StartSpeed   - Speed to start dump regulation (rpm)\n'.format(rosco_vt['Dump_StartSpeed']))
-    file.write('{:<13.5f}           ! Dump_Window       - Dump torque increases from 0 to 100% of Dump_MaxTq from Dump_StartSpeed to Dump_StartSpeed + Dump_Window (rpm)\n'.format(rosco_vt['Dump_Window']))
-    file.write('{:<13.5f}           ! Dump_MaxTq       - Maximum dump brake torque (Nm)\n'.format(rosco_vt['Dump_MaxTq']))
+    file.write('{:<13.5f}           ! Dump_StartSpeed       - Speed to start dump regulation (rpm)\n'.format(rosco_vt['Dump_StartSpeed']))
+    file.write('{:<13.5f}           ! Dump_Window           - Dump torque increases from 0 to 100% of Dump_MaxTq from Dump_StartSpeed to Dump_StartSpeed + Dump_Window (rpm)\n'.format(rosco_vt['Dump_Window']))
+    file.write('{:<13.5f}           ! Dump_MaxTq            - Maximum dump brake torque (Nm)\n'.format(rosco_vt['Dump_MaxTq']))
     file.write('\n')
     file.write('!------- BLADE PITCH CONTROL ----------------------------------------------\n')
     file.write('{:<11d}         ! PC_GS_n			- Amount of gain-scheduling table entries\n'.format(int(rosco_vt['PC_GS_n'])))
@@ -442,16 +442,16 @@ def DISCON_dict(turbine, controller, txt_filename=None):
     DISCON_dict['F_FlHighPassFreq']     = controller.f_fl_highpassfreq
     DISCON_dict['F_FlCornerFreq']       = [controller.ptfm_freq, 1.0]
     # -------- YAW SPEED REGULATION ----------
-    DISCON_dict['Yaw_StartRegSpeed']    = 75
+    DISCON_dict['Yaw_RegStartSpeed']    = 75
     DISCON_dict['Yaw_RegDelay']	        = 1.5
-    DISCON_dict['Yaw_OutAngle']	        = 1.5
-    DISCON_dict['Yaw_OutSpeed']         = 1.5
-    DISCON_dict['Yaw_RestartDelay']     = 10
+    DISCON_dict['Yaw_RegOutAngle']	        = 1.5
+    DISCON_dict['Yaw_RegOutSpeed']         = 1.5
+    DISCON_dict['Yaw_RegRestartDelay']     = 10
     DISCON_dict['Yaw_StopRegSpeed']     = 72
     DISCON_dict['Yaw_SeekRotSpeed']     = 67
     DISCON_dict['Yaw_SeekHist']         = 10
-    DISCON_dict['Yaw_SeekAngle']        = 3
-    DISCON_dict['Yaw_SeekSpeed']        = 0.75
+    DISCON_dict['Yaw_SeekInAngle']        = 3
+    DISCON_dict['Yaw_SeekInSpeed']        = 0.75
     DISCON_dict['Yaw_SeekDelay']        = 20
 
     # -------- FAULT OPTIONS ----------

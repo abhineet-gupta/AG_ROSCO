@@ -268,16 +268,16 @@ CONTAINS
 
         !------- YAW SPEED REGULATION ----------------------------------------------
         CALL ReadEmptyLine(UnControllerParameters,CurLine)
-        CALL ParseInput(UnControllerParameters,CurLine,'Yaw_StartRegSpeed',accINFILE(1),CntrPar%Yaw_StartRegSpeed,ErrVar)
+        CALL ParseInput(UnControllerParameters,CurLine,'Yaw_RegStartSpeed',accINFILE(1),CntrPar%Yaw_RegStartSpeed,ErrVar)
         CALL ParseInput(UnControllerParameters,CurLine,'Yaw_RegDelay',accINFILE(1),CntrPar%Yaw_RegDelay,ErrVar)
-        CALL ParseInput(UnControllerParameters,CurLine,'Yaw_OutAngle',accINFILE(1),CntrPar%Yaw_OutAngle,ErrVar)
-        CALL ParseInput(UnControllerParameters,CurLine,'Yaw_OutSpeed',accINFILE(1),CntrPar%Yaw_OutSpeed,ErrVar)
-        CALL ParseInput(UnControllerParameters,CurLine,'Yaw_RestartDelay',accINFILE(1),CntrPar%Yaw_RestartDelay,ErrVar)
+        CALL ParseInput(UnControllerParameters,CurLine,'Yaw_RegOutAngle',accINFILE(1),CntrPar%Yaw_RegOutAngle,ErrVar)
+        CALL ParseInput(UnControllerParameters,CurLine,'Yaw_RegOutSpeed',accINFILE(1),CntrPar%Yaw_RegOutSpeed,ErrVar)
+        CALL ParseInput(UnControllerParameters,CurLine,'Yaw_RegRestartDelay',accINFILE(1),CntrPar%Yaw_RegRestartDelay,ErrVar)
         CALL ParseInput(UnControllerParameters,CurLine,'Yaw_StopRegSpeed',accINFILE(1),CntrPar%Yaw_StopRegSpeed,ErrVar)
         CALL ParseInput(UnControllerParameters,CurLine,'Yaw_SeekRotSpeed',accINFILE(1),CntrPar%Yaw_SeekRotSpeed,ErrVar)
         CALL ParseInput(UnControllerParameters,CurLine,'Yaw_SeekHist',accINFILE(1),CntrPar%Yaw_SeekHist,ErrVar)
-        CALL ParseInput(UnControllerParameters,CurLine,'Yaw_SeekAngle',accINFILE(1),CntrPar%Yaw_SeekAngle,ErrVar)
-        CALL ParseInput(UnControllerParameters,CurLine,'Yaw_SeekSpeed',accINFILE(1),CntrPar%Yaw_SeekSpeed,ErrVar)
+        CALL ParseInput(UnControllerParameters,CurLine,'Yaw_SeekInAngle',accINFILE(1),CntrPar%Yaw_SeekInAngle,ErrVar)
+        CALL ParseInput(UnControllerParameters,CurLine,'Yaw_SeekInSpeed',accINFILE(1),CntrPar%Yaw_SeekInSpeed,ErrVar)
         CALL ParseInput(UnControllerParameters,CurLine,'Yaw_SeekDelay',accINFILE(1),CntrPar%Yaw_SeekDelay,ErrVar)
         CALL ReadEmptyLine(UnControllerParameters,CurLine)
 

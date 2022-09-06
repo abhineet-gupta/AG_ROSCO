@@ -105,21 +105,21 @@ ControlParameters:
       allocatable: True
 
     # YAW SPEED REGULATION 
-    Yaw_StartRegSpeed:
+    Yaw_RegStartSpeed:
       <<: *real
       description: Speed used to trigger yaw-out speed regulation [rpm] 
     Yaw_RegDelay:
       <<: *real
-      description: Wait Yaw_RegDelay after GenSpeed > Yaw_RegSpeed before yaw-out [sec] 
-    Yaw_OutAngle:
+      description: Wait Yaw_RegDelay after GenSpeed > Yaw_RegOutSpeed before yaw-out [sec] 
+    Yaw_RegOutAngle:
       <<: *real
       description: Yaw out by this angle [deg] 
-    Yaw_OutSpeed:
+    Yaw_RegOutSpeed:
       <<: *real
       description: Yaw out by this speed [deg/s]
-    Yaw_RestartDelay:
+    Yaw_RegRestartDelay:
       <<: *real
-      description: After yaw moves, wait Yaw_RestartDelay before re-checking and repeating yaw-out [sec]
+      description: After yaw moves, wait Yaw_RegRestartDelay before re-checking and repeating yaw-out [sec]
     Yaw_StopRegSpeed:
       <<: *real
       description: Stop regulating when generator speed < Yaw_StopRegSpeed
@@ -129,10 +129,10 @@ ControlParameters:
     Yaw_SeekHist:
       <<: *real
       description: Yaw-in if abs(wind vane angle) > Yaw_SeekHist (deg)
-    Yaw_SeekAngle:
+    Yaw_SeekInAngle:
       <<: *real
       description: Yaw-in by this amount (deg)
-    Yaw_SeekSpeed:
+    Yaw_SeekInSpeed:
       <<: *real
       description: Yaw-in at this angular speed (deg/s)
     Yaw_SeekDelay:

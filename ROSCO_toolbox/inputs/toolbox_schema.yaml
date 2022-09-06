@@ -538,21 +538,21 @@ properties:
                             type: number
                         description: Corner frequency and damping in the second order low pass filter of the blade root bending moment for flap control 
                         units: rad/s
-                    Yaw_StartRegSpeed:
+                    Yaw_RegStartSpeed:
                         type: number
                         description:  Speed used to trigger yaw-out speed regulation [rpm] 
                     Yaw_RegDelay:
                         type: number
-                        description: Wait Yaw_RegDelay after GenSpeed > Yaw_RegSpeed before yaw-out [sec] 
-                    Yaw_OutAngle:
+                        description: Wait Yaw_RegDelay after GenSpeed > Yaw_RegOutSpeed before yaw-out [sec] 
+                    Yaw_RegOutAngle:
                         type: number
                         description: Yaw out by this angle [deg] 
-                    Yaw_OutSpeed:
+                    Yaw_RegOutSpeed:
                         type: number
                         description: Yaw out by this speed [deg/s]
-                    Yaw_RestartDelay:
+                    Yaw_RegRestartDelay:
                         type: number
-                        description: After yaw moves, wait Yaw_RestartDelay before re-checking and repeating yaw-out [sec]
+                        description: After yaw moves, wait Yaw_RegRestartDelay before re-checking and repeating yaw-out [sec]
                     Yaw_StopRegSpeed:
                         type: number
                         description: Stop regulating when generator speed < Yaw_StopRegSpeed
@@ -562,10 +562,10 @@ properties:
                     Yaw_SeekHist:
                         type: number
                         description: Yaw-in if abs(wind vane angle) > Yaw_SeekHist (deg)
-                    Yaw_SeekAngle:
+                    Yaw_SeekInAngle:
                         type: number
                         description: Yaw-in by this amount (deg)
-                    Yaw_SeekSpeed:
+                    Yaw_SeekInSpeed:
                         type: number
                         description: Yaw-in at this angular speed (deg/s)
                     Yaw_SeekDelay:

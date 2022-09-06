@@ -21,16 +21,16 @@ TYPE, PUBLIC :: ControlParameters
     REAL(DbKi)                    :: F_FlHighPassFreq            ! Natural frequency of first-roder high-pass filter for nacelle fore-aft motion [rad/s].
     REAL(DbKi)                    :: F_YawErr                    ! Corner low pass filter corner frequency for yaw controller [rad/s].
     REAL(DbKi), DIMENSION(:), ALLOCATABLE     :: F_FlpCornerFreq             ! Corner frequency (-3dB point) in the second order low pass filter of the blade root bending moment for flap control [rad/s].
-    REAL(DbKi)                    :: Yaw_StartRegSpeed           ! Speed used to trigger yaw-out speed regulation [rpm]
-    REAL(DbKi)                    :: Yaw_RegDelay                ! Wait Yaw_RegDelay after GenSpeed > Yaw_RegSpeed before yaw-out [sec]
-    REAL(DbKi)                    :: Yaw_OutAngle                ! Yaw out by this angle [deg]
-    REAL(DbKi)                    :: Yaw_OutSpeed                ! Yaw out by this speed [deg/s]
-    REAL(DbKi)                    :: Yaw_RestartDelay            ! After yaw moves, wait Yaw_RestartDelay before re-checking and repeating yaw-out [sec]
+    REAL(DbKi)                    :: Yaw_RegStartSpeed           ! Speed used to trigger yaw-out speed regulation [rpm]
+    REAL(DbKi)                    :: Yaw_RegDelay                ! Wait Yaw_RegDelay after GenSpeed > Yaw_RegOutSpeed before yaw-out [sec]
+    REAL(DbKi)                    :: Yaw_RegOutAngle             ! Yaw out by this angle [deg]
+    REAL(DbKi)                    :: Yaw_RegOutSpeed             ! Yaw out by this speed [deg/s]
+    REAL(DbKi)                    :: Yaw_RegRestartDelay         ! After yaw moves, wait Yaw_RegRestartDelay before re-checking and repeating yaw-out [sec]
     REAL(DbKi)                    :: Yaw_StopRegSpeed            ! Stop regulating when generator speed < Yaw_StopRegSpeed
     REAL(DbKi)                    :: Yaw_SeekRotSpeed            ! Start yaw-in when rotor speed < Yaw_SeekRotSpeed (rpm)
     REAL(DbKi)                    :: Yaw_SeekHist                ! Yaw-in if abs(wind vane angle) > Yaw_SeekHist (deg)
-    REAL(DbKi)                    :: Yaw_SeekAngle               ! Yaw-in by this amount (deg)
-    REAL(DbKi)                    :: Yaw_SeekSpeed               ! Yaw-in at this angular speed (deg/s)
+    REAL(DbKi)                    :: Yaw_SeekInAngle             ! Yaw-in by this amount (deg)
+    REAL(DbKi)                    :: Yaw_SeekInSpeed             ! Yaw-in at this angular speed (deg/s)
     REAL(DbKi)                    :: Yaw_SeekDelay               ! Restart yaw-in after Yaw_SeekDelay (s)
     REAL(DbKi)                    :: Fault_Speed                 ! Rotor speed to trigger fault
     REAL(DbKi)                    :: Fault_Delay                 ! Wait this long to trigger fault after Fault_Speed
