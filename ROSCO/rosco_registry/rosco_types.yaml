@@ -974,7 +974,7 @@ LocalVariables:
       <<: *real 
       description: Shutdown, .FALSE. if inactive, .TRUE. if active
     Fault:
-      <<: *logical
+      <<: *integer
       description: Is turbine in fault mode after high overspeed
     Fault_Brake:
       <<: *integer

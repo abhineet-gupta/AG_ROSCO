@@ -278,7 +278,7 @@ TYPE, PUBLIC :: LocalVariables
     REAL(DbKi)                    :: VS_LastGenTrqF              ! Differentiated integrated wind speed quantity for estimation [m/s]
     LOGICAL                       :: SD                          ! Shutdown, .FALSE. if inactive, .TRUE. if active
     REAL(DbKi)                    :: Fl_PitCom                   ! Shutdown, .FALSE. if inactive, .TRUE. if active
-    LOGICAL                       :: Fault                       ! Is turbine in fault mode after high overspeed
+    INTEGER(IntKi)                :: Fault                       ! Is turbine in fault mode after high overspeed
     INTEGER(IntKi)                :: Fault_Brake                 ! 0 - no need to brake, 1 - timer active, 2 - brake enabled after Fault_BrakeTimer
     REAL(DbKi)                    :: Fault_Timer                 ! Time elapsed since fault was triggered
     REAL(DbKi)                    :: Fault_BrakeTimer            ! Time elapsed since fault was triggered

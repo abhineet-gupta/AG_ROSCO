@@ -237,7 +237,7 @@ CONTAINS
         ENDIF
 
         ! Check for fault, disable generator if true
-        IF (LocalVar%Fault) THEN
+        IF (LocalVar%Fault == 1) THEN
             LocalVar%GenTq = 0_DbKi
         ENDIF
 
@@ -325,7 +325,7 @@ CONTAINS
         ! write(401,*) LocalVar%NacHeading, PrevHeading, CntrPar%Yaw_RegOutAngle
 
         ! Yaw maneuver
-        IF (LocalVar%Fault) THEN
+        IF (LocalVar%Fault == 1) THEN
 
             ! Yaw out of the wind based on the current NacVane
             IF (LocalVar%NacVane < 0) THEN  
@@ -450,7 +450,7 @@ SUBROUTINE CheckFault(CntrPar, LocalVar)
 
         ! Initialize
         IF (LocalVar%iStatus == 0) THEN
-            LocalVar%Fault = .FALSE.
+            LocalVar%Fault = 1
             LocalVar%Fault_Timer = 0_DbKi
             LocalVar%Fault_Brake = 0_IntKi
             LocalVar%Fault_BrakeTimer = 0_DbKi
@@ -466,7 +466,7 @@ SUBROUTINE CheckFault(CntrPar, LocalVar)
         ENDIF
 
         IF (LocalVar%Fault_Timer > CntrPar%Fault_Delay) THEN
-            LocalVar%Fault = .TRUE.
+            LocalVar%Fault = 1
         ENDIF
 
         IF (LocalVar%Fault_Brake > 0) THEN
