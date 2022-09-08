@@ -252,9 +252,10 @@ TYPE, PUBLIC :: LocalVariables
     REAL(DbKi)                    :: ReElapsedTime               ! Elapsed time of start reg timer
     REAL(DbKi)                    :: YawRate                     ! Commanded yaw rate [rad/s].
     INTEGER(IntKi)                :: YawRateDir                  ! Commanded yaw direction (-1 or 1) [rad/s].
-    LOGICAL                       :: YawOut                      ! Are we yawing out to reduce generator speed?
+    INTEGER(IntKi)                :: Yaw_Out                     ! Are we yawing out to reduce generator speed?
     INTEGER(IntKi)                :: Yaw_Seek                    ! In yaw seek mode? 0 - no, 1 - yes
     REAL(DbKi)                    :: Yaw_SeekTimer               ! Timer for yaw seek
+    REAL(DbKi)                    :: PrevHeading                 ! Previous nacelle heading
     REAL(DbKi)                    :: IPC_KI(2)                   ! Integral gain for IPC, after ramp [-]
     REAL(DbKi)                    :: IPC_KP(2)                   ! Proportional gain for IPC, after ramp [-]
     INTEGER(IntKi)                :: PC_State                    ! State of the pitch control system
