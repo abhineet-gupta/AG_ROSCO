@@ -1,6 +1,8 @@
 import os, yaml
 import numpy as np
 
+import pandas as pd
+
 from ROSCO_toolbox.ofTools.case_gen.CaseGen_General import CaseGen_General
 from ROSCO_toolbox.ofTools.case_gen.CaseGen_IEC import CaseGen_IEC
 from ROSCO_toolbox.ofTools.case_gen.HH_WindFile import HH_StepFile, HH_WindFile
@@ -352,11 +354,35 @@ def user_hh(**wind_case_opts):
     if 'wind_filenames' not in wind_case_opts:
         raise Exception('Define wind_filenames when using turb_bts case generator')
 
+    ss = pd.read_pickle('/Users/dzalkind/Tools/ROSCO_QED/Test_Cases/QED/steady.p')
+
+    U = ss['Wind1VelX']['mean'].to_numpy()
+    yaw = ss['NacYaw']['mean'].to_numpy()
+    rot_speed = ss['RotSpeed']['mean'].to_numpy()
+
+    # Get first wind speed
+    U_0 = []
+    for f in wind_case_opts['wind_filenames']:
+        wind_dat = np.loadtxt(f,comments='!')
+        if len(wind_dat.shape) == 1:
+            # expand dimension
+            wind_dat = np.array([wind_dat])
+        U_0.append(wind_dat[0,1])
+    U_0 = np.array(U_0)
+
+    yaws = np.interp(U_0,U,yaw).tolist()
+    spds = np.interp(U_0,U,rot_speed).tolist()
+
     # wind inflow
     case_inputs = base_op_case()
     case_inputs[("Fst","TMax")] = {'vals':[TMax], 'group':0}
     case_inputs[("InflowWind","WindType")] = {'vals':[2], 'group':0}
     case_inputs[("InflowWind","Filename_Uni")] = {'vals':wind_case_opts['wind_filenames'], 'group':1}
+    case_inputs[("ElastoDyn","NacYaw")] = {'vals':yaws, 'group':1}
+    case_inputs[("ElastoDyn","RotSpeed")] = {'vals':spds, 'group':1}
+    case_inputs[("ServoDyn","YawNeut")] = {'vals':yaws, 'group':1}
+
+    case_inputs
 
     return case_inputs
     

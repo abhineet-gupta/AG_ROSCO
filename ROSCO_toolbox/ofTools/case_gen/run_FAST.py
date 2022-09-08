@@ -179,7 +179,7 @@ class run_FAST_ROSCO():
 if __name__ == "__main__":
 
     # Simulation config
-    sim_config = 15
+    sim_config = 16
     
     r = run_FAST_ROSCO()
 
@@ -229,12 +229,39 @@ if __name__ == "__main__":
         r.save_dir      = '/Users/dzalkind/Tools/ROSCO_QED/outputs/QED_Seek1'
         r.wind_case_opts    = {
             'U_start': [14],
-            'U_end': [12],
+            'U_end': [10],
             'T_step': 100,
             'wind_dir': '/Users/dzalkind/Projects/BAR/BAR_Designs/BAR_USC/ROSCO_BAR_USC'
             }
         # r.control_sweep_fcn = cl.sweep_ps_percent
         r.n_cores = 1
+
+    elif sim_config == 16:
+
+        # QED Power curve
+        r.tuning_yaml   = 'QED.yaml'
+        r.save_dir      = '/Users/dzalkind/Tools/ROSCO_QED/outputs/QED_DLC_8'
+        r.wind_case_fcn = cl.user_hh
+        r.wind_case_opts    = {
+            'TMax': 150.,
+            'wind_filenames': [
+                               '/Users/dzalkind/Tools/ROSCO_QED/Test_Cases/QED/Wind/ECD-R.wnd',
+                               '/Users/dzalkind/Tools/ROSCO_QED/Test_Cases/QED/Wind/ECD+R.wnd',
+                               '/Users/dzalkind/Tools/ROSCO_QED/Test_Cases/QED/Wind/EDC-I.wnd',
+                               '/Users/dzalkind/Tools/ROSCO_QED/Test_Cases/QED/Wind/EDC-O.wnd',
+                               '/Users/dzalkind/Tools/ROSCO_QED/Test_Cases/QED/Wind/EDC+I.wnd',
+                               '/Users/dzalkind/Tools/ROSCO_QED/Test_Cases/QED/Wind/EDC+O.wnd',
+                               '/Users/dzalkind/Tools/ROSCO_QED/Test_Cases/QED/Wind/EOGI.wnd',
+                               '/Users/dzalkind/Tools/ROSCO_QED/Test_Cases/QED/Wind/EOGO.wnd',
+                               '/Users/dzalkind/Tools/ROSCO_QED/Test_Cases/QED/Wind/EWM01.wnd',
+                               '/Users/dzalkind/Tools/ROSCO_QED/Test_Cases/QED/Wind/EWM50.wnd',
+                               '/Users/dzalkind/Tools/ROSCO_QED/Test_Cases/QED/Wind/NWP20.0.wnd'
+                               ]
+            }
+        # r.control_sweep_fcn = cl.sweep_ps_percent
+        r.n_cores = 6
+
+        
 
     else:
         raise Exception('This simulation configuration is not supported.')
