@@ -261,7 +261,7 @@ CONTAINS
         !       Y_ControlMode = 0, 1, YawRateControl No yaw control
         !       Y_ControlMode = 2, this YawSpeedRegulation routine
 
-        USE ROSCO_Types, ONLY : ControlParameters, LocalVariables, ObjectInstances, DebugVariables, ErrorVariables
+        USE ROSCO_Types, ONLY : ControlParameters, LocalVariables, ObjectInstances, DebugVariables, ErrorVariables, MovingAvgParameters
     
         REAL(C_FLOAT), INTENT(INOUT) :: avrSWAP(*) ! The swap array, used to pass data to, and receive data from, the DLL controller.
     
@@ -270,6 +270,10 @@ CONTAINS
         TYPE(ObjectInstances), INTENT(INOUT)      :: objInst
         TYPE(DebugVariables), INTENT(INOUT)       :: DebugVar
         TYPE(ErrorVariables), INTENT(INOUT)       :: ErrVar
+
+        TYPE(MovingAvgParameters), SAVE           :: MA_Vane
+
+
 
         ! Initialize
         IF (LocalVar%iStatus == 0) THEN
@@ -283,7 +287,10 @@ CONTAINS
             LocalVar%Yaw_Seek = 0_IntKi
             LocalVar%Yaw_SeekTimer = 0_IntKi
         ENDIF
-        
+
+        ! Filter wind vane signal
+        LocalVar%NacVaneF = MovingAvgFilter(LocalVar%NacVane,LocalVar%DT,10.0_DbKi, MA_Vane, LocalVar%iStatus, .FALSE.)
+        ! MovingAvgFilter(InputSignal, DT, FilterTime, MA_Vane, LocalVar%iStatus, .FALSE.)
         
         ! Start regulation trigger
         IF ((LocalVar%GenSpeedF > (CntrPar%Yaw_RegStartSpeed / RPS2RPM) ) .AND. (LocalVar%Yaw_Out == 0) ) THEN
