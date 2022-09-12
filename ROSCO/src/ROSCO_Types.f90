@@ -205,6 +205,10 @@ TYPE, PUBLIC :: piParams
     REAL(DbKi), DIMENSION(99)     :: ITermLast2                  ! Previous integrator term - second integrator
 END TYPE piParams
 
+TYPE, PUBLIC :: MovingAvgParameters
+    REAL(DbKi), DIMENSION(:), ALLOCATABLE     :: buffer                      ! Buffer of moving average inputs
+END TYPE MovingAvgParameters
+
 TYPE, PUBLIC :: LocalVariables
     INTEGER(IntKi)                :: iStatus                     ! Initialization status
     REAL(DbKi)                    :: Time                        ! Time [s]
@@ -213,6 +217,7 @@ TYPE, PUBLIC :: LocalVariables
     REAL(DbKi)                    :: GenSpeed                    ! Generator speed (HSS) [rad/s]
     REAL(DbKi)                    :: RotSpeed                    ! Rotor speed (LSS) [rad/s]
     REAL(DbKi)                    :: NacVane                     ! Nacelle vane angle [deg]
+    REAL(DbKi)                    :: NacVaneF                    ! Filtered nacelle vane angle [deg]
     REAL(DbKi)                    :: NacHeading                  ! (Record 37) Nacelle yaw angle from North (deg) [ \f$ u\%YawAngle - p\%NacYaw\_North \f$ ] Converted to deg when avrSWAP read
     REAL(DbKi)                    :: HorWindV                    ! Hub height wind speed m/s
     REAL(DbKi)                    :: rootMOOP(3)                 ! Blade root bending moment [Nm]
@@ -294,6 +299,7 @@ TYPE, PUBLIC :: LocalVariables
     LOGICAL                       :: restart                     ! Restart flag
     TYPE(WE)                      :: WE                          ! Wind speed estimator parameters derived type
     TYPE(FilterParameters)        :: FP                          ! Filter parameters derived type
+    TYPE(MovingAvgParameters)     :: MA                          ! Moving average parameters derived type
     TYPE(piParams)                :: piP                         ! PI parameters derived type
 END TYPE LocalVariables
 
