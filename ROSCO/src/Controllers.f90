@@ -352,16 +352,17 @@ CONTAINS
                 ! Save current heading
                 IF (LocalVar%YawRateDir == 0) THEN
                     LocalVar%PrevHeading = LocalVar%NacHeading
-                ENDIF
                 
-                ! Set yaw direction
-                IF (LocalVar%NacVane < 0) THEN  
-                    ! Positive yaw
-                    LocalVar%YawRateDir = 1 
-                ELSE
-                    ! Negative yaw
-                    LocalVar%YawRateDir = -1  
+                    ! Yaw out of the wind based on the current NacVane, put inside IF so it locks in one direction
+                    IF (LocalVar%NacVane < 0) THEN  
+                        ! Positive yaw
+                        LocalVar%YawRateDir = 1 
+                    ELSE
+                        ! Negative yaw
+                        LocalVar%YawRateDir = -1  
+                    ENDIF
                 ENDIF
+
 
                 ! Stop yaw logic
                 IF (LocalVar%YawRateDir > 0) THEN
@@ -393,15 +394,15 @@ CONTAINS
                 ! Save current heading
                 IF (LocalVar%YawRateDir == 0) THEN
                     LocalVar%PrevHeading = LocalVar%NacHeading
-                ENDIF
 
-                ! Yaw out of the wind based on the current NacVane
-                IF (LocalVar%NacVane > 0) THEN  
-                    ! Positive yaw
-                    LocalVar%YawRateDir = 1 
-                ELSE
-                    ! Negative yaw
-                    LocalVar%YawRateDir = -1  
+                    ! Yaw out of the wind based on the current NacVane, put inside IF so it locks in one direction
+                    IF (LocalVar%NacVane > 0) THEN  
+                        ! Positive yaw
+                        LocalVar%YawRateDir = 1 
+                    ELSE
+                        ! Negative yaw
+                        LocalVar%YawRateDir = -1  
+                    ENDIF
                 ENDIF
 
                 LocalVar%YawRate = LocalVar%YawRateDir * CntrPar%Yaw_SeekInSpeed
