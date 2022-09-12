@@ -12,6 +12,7 @@ TYPE, PUBLIC :: ControlParameters
     INTEGER(IntKi)                :: F_LPFType                   ! Low pass filter on the rotor and generator speed {1 - first-order low-pass filter, 2 - second-order low-pass filter}, [rad/s]
     INTEGER(IntKi)                :: F_NotchType                 ! Notch on the measured generator speed {0 - disable, 1 - enable}
     REAL(DbKi)                    :: F_LPFCornerFreq             ! Corner frequency (-3dB point) in the first-order low-pass filter, [rad/s]
+    REAL(DbKi)                    :: MA_VaneWindow               ! Moving average time window for wind vane signal, [sec]
     REAL(DbKi)                    :: F_LPFDamping                ! Damping coefficient [used only when F_FilterType = 2]
     REAL(DbKi)                    :: F_NotchCornerFreq           ! Natural frequency of the notch filter, [rad/s]
     REAL(DbKi), DIMENSION(:), ALLOCATABLE     :: F_NotchBetaNumDen           ! These two notch damping values (numerator and denominator) determines the width and depth of the notch

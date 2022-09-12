@@ -73,6 +73,9 @@ ControlParameters:
     F_LPFCornerFreq:
       <<: *real
       description: Corner frequency (-3dB point) in the first-order low-pass filter, [rad/s]
+    MA_VaneWindow:
+      <<: *real
+      description: Moving average time window for wind vane signal, [sec]
     F_LPFDamping:
       <<: *real
       description: Damping coefficient [used only when F_FilterType = 2]

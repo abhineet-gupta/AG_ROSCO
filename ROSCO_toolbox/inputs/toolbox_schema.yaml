@@ -502,6 +502,10 @@ properties:
                         type: number
                         description: Corner frequency (-3dB point) in the low-pass filters, 
                         units: rad/s
+                    MA_VaneWindow:
+                        type: number
+                        description: Moving average time window for wind vane signal, [sec]
+                        units: sec
                     F_LPFDamping:
                         type: number
                         description: Damping coefficient (used only when F_FilterType = 2 [-]

@@ -273,8 +273,6 @@ CONTAINS
 
         TYPE(MovingAvgParameters), SAVE           :: MA_Vane
 
-
-
         ! Initialize
         IF (LocalVar%iStatus == 0) THEN
             LocalVar%StElapsedTime = 0_DbKi
@@ -289,7 +287,7 @@ CONTAINS
         ENDIF
 
         ! Filter wind vane signal
-        LocalVar%NacVaneF = MovingAvgFilter(LocalVar%NacVane,LocalVar%DT,10.0_DbKi, MA_Vane, LocalVar%iStatus, .FALSE.)
+        LocalVar%NacVaneF = MovingAvgFilter(LocalVar%NacVane,LocalVar%DT,CntrPar%MA_VaneWindow, MA_Vane, LocalVar%iStatus, .FALSE.)
         ! MovingAvgFilter(InputSignal, DT, FilterTime, MA_Vane, LocalVar%iStatus, .FALSE.)
         
         ! Start regulation trigger
@@ -306,7 +304,7 @@ CONTAINS
         ! Check for yaw seek
         LocalVar%Yaw_SeekTimer = LocalVar%Yaw_SeekTimer + LocalVar%DT
         IF ((LocalVar%GenSpeedF < (CntrPar%Yaw_SeekRotSpeed / RPS2RPM) ) .AND. (LocalVar%Yaw_SeekTimer > CntrPar%Yaw_SeekDelay))THEN
-            IF (ABS(LocalVar%NacVane) > CntrPar%Yaw_SeekHist) THEN
+            IF (ABS(LocalVar%NacVaneF) > CntrPar%Yaw_SeekHist) THEN
                 LocalVar%Yaw_Seek = 1
             ENDIF
         ENDIF
@@ -325,7 +323,7 @@ CONTAINS
         IF (LocalVar%Fault == 1) THEN
 
             ! Yaw out of the wind based on the current NacVane
-            IF (LocalVar%NacVane < 0) THEN  
+            IF (LocalVar%NacVaneF < 0) THEN  
                 ! Positive yaw
                 LocalVar%YawRateDir = 1 
             ELSE
@@ -354,7 +352,7 @@ CONTAINS
                     LocalVar%PrevHeading = LocalVar%NacHeading
                 
                     ! Yaw out of the wind based on the current NacVane, put inside IF so it locks in one direction
-                    IF (LocalVar%NacVane < 0) THEN  
+                    IF (LocalVar%NacVaneF < 0) THEN  
                         ! Positive yaw
                         LocalVar%YawRateDir = 1 
                     ELSE
@@ -396,7 +394,7 @@ CONTAINS
                     LocalVar%PrevHeading = LocalVar%NacHeading
 
                     ! Yaw out of the wind based on the current NacVane, put inside IF so it locks in one direction
-                    IF (LocalVar%NacVane > 0) THEN  
+                    IF (LocalVar%NacVaneF > 0) THEN  
                         ! Positive yaw
                         LocalVar%YawRateDir = 1 
                     ELSE
@@ -441,7 +439,7 @@ CONTAINS
             ENDIF 
         ENDIF
 
-        write(403,*) LocalVar%StElapsedTime, CntrPar%Yaw_RegDelay, LocalVar%NacVane, LocalVar%YawRateDir
+        write(403,*) LocalVar%StElapsedTime, CntrPar%Yaw_RegDelay, LocalVar%NacVaneF, LocalVar%YawRateDir
 
 
         ! Output yaw rate command in rad/s

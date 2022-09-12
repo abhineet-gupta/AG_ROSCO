@@ -67,6 +67,7 @@ def write_DISCON(turbine, controller, param_file='DISCON.IN', txt_filename='Cp_C
     file.write('\n')
     file.write('!------- FILTERS ----------------------------------------------------------\n') 
     file.write('{:<13.5f}       ! F_LPFCornerFreq	- Corner frequency (-3dB point) in the low-pass filters, [rad/s]\n'.format(rosco_vt['F_LPFCornerFreq'])) 
+    file.write('{:<13.5f}       ! MA_VaneWindow     - Moving average time window for wind vane signal, [sec]\n'.format(rosco_vt['MA_VaneWindow'])) 
     file.write('\n')
     file.write('!------- YAW SPEED REGULATION ----------------------------------------------\n') 
     file.write('{:<13.5f}           ! Yaw_RegStartSpeed	    - Speed used to trigger yaw-out speed regulation [rpm] \n'.format(rosco_vt['Yaw_RegStartSpeed']))
@@ -424,6 +425,8 @@ def DISCON_dict(turbine, controller, txt_filename=None):
     DISCON_dict['ZMQ_Mode']         = int(controller.ZMQ_Mode)
     # ------- FILTERS -------
     DISCON_dict['F_LPFCornerFreq']	    = turbine.bld_edgewise_freq * 1/4
+    DISCON_dict['MA_VaneWindow']	    = 3.0
+    
     DISCON_dict['F_LPFDamping']		    = controller.F_LPFDamping
     if controller.Flp_Mode > 0:
         DISCON_dict['F_NotchCornerFreq'] = turbine.bld_flapwise_freq
