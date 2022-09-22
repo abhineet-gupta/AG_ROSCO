@@ -322,24 +322,29 @@ CONTAINS
         ! Yaw maneuver
         IF (LocalVar%Fault == 1) THEN
 
-            ! Yaw out of the wind based on the current NacVane
-            IF (LocalVar%NacVaneF < 0) THEN  
-                ! Positive yaw
-                LocalVar%YawRateDir = 1 
-            ELSE
-                ! Negative yaw
-                LocalVar%YawRateDir = -1  
-            ENDIF
+            ! Only yaw out once, when LocalVar%Fault_Brake = 1, stop
+            IF (LocalVar%Fault_Brake == 0) THEN
 
-            LocalVar%YawRate = LocalVar%YawRateDir * CntrPar%Fault_YawSpeed
+                ! Yaw out of the wind based on the current NacVane
+                IF (LocalVar%NacVaneF < 0) THEN  
+                    ! Positive yaw
+                    LocalVar%YawRateDir = 1 
+                ELSE
+                    ! Negative yaw
+                    LocalVar%YawRateDir = -1  
+                ENDIF
 
-            IF (((LocalVar%YawRateDir > 0) .AND. (LocalVar%NacHeading > CntrPar%Fault_Yaw)) .OR. &
-                ((LocalVar%YawRateDir < 0) .AND. (LocalVar%NacHeading < -CntrPar%Fault_Yaw))) THEN
-                ! Stop yawing
-                LocalVar%YawRateDir = 0  
-                LocalVar%YawRate = 0
+                LocalVar%YawRate = LocalVar%YawRateDir * CntrPar%Fault_YawSpeed
 
-                LocalVar%Fault_Brake = 1_IntKI
+                IF (((LocalVar%YawRateDir > 0) .AND. (LocalVar%NacHeading > CntrPar%Fault_Yaw)) .OR. &
+                    ((LocalVar%YawRateDir < 0) .AND. (LocalVar%NacHeading < -CntrPar%Fault_Yaw))) THEN
+                    ! Stop yawing
+                    LocalVar%YawRateDir = 0  
+                    LocalVar%YawRate = 0
+
+                    LocalVar%Fault_Brake = 1_IntKI
+                ENDIF
+
             ENDIF
 
 
@@ -479,6 +484,7 @@ SUBROUTINE CheckFault(CntrPar, LocalVar)
             LocalVar%Fault = 1
         ENDIF
 
+        ! Increment Fault_BrakeTimer each iteration
         IF (LocalVar%Fault_Brake > 0) THEN
             LocalVar%Fault_BrakeTimer = LocalVar%Fault_BrakeTimer + LocalVar%DT
         ENDIF 
