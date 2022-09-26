@@ -286,11 +286,10 @@ CONTAINS
             LocalVar%Yaw_SeekTimer = 0_IntKi
         ENDIF
 
-        ! Filter wind vane signal
+        ! Filter wind vane signal with moving average filter, parameters and shift register stored in MA_Vane
         LocalVar%NacVaneF = MovingAvgFilter(LocalVar%NacVane,LocalVar%DT,CntrPar%MA_VaneWindow, MA_Vane, LocalVar%iStatus, .FALSE.)
-        ! MovingAvgFilter(InputSignal, DT, FilterTime, MA_Vane, LocalVar%iStatus, .FALSE.)
         
-        ! Start regulation trigger
+        ! Start regulation trigger, if not already yawing out
         IF ((LocalVar%GenSpeedF > (CntrPar%Yaw_RegStartSpeed / RPS2RPM) ) .AND. (LocalVar%Yaw_Out == 0) ) THEN
             ! Start timer
             IF (LocalVar%YawRateDir == 0) THEN
@@ -302,24 +301,27 @@ CONTAINS
         ENDIF
 
         ! Check for yaw seek
-        LocalVar%Yaw_SeekTimer = LocalVar%Yaw_SeekTimer + LocalVar%DT
+        LocalVar%Yaw_SeekTimer = LocalVar%Yaw_SeekTimer + LocalVar%DT  ! increment timer, resets after a seek maneuver
+        
         IF ((LocalVar%GenSpeedF < (CntrPar%Yaw_SeekRotSpeed / RPS2RPM) ) .AND. (LocalVar%Yaw_SeekTimer > CntrPar%Yaw_SeekDelay))THEN
+            
+            ! Vane angle misaligned by more than CntrPar%Yaw_SeekHist
             IF (ABS(LocalVar%NacVaneF) > CntrPar%Yaw_SeekHist) THEN
                 LocalVar%Yaw_Seek = 1
             ENDIF
         ENDIF
 
-        ! Start yaw maneuver for speed regulations
+        ! Start yaw out for reducing speed.  We stay in Yaw_Out until speed is less than the threshold
         IF (LocalVar%StElapsedTime > CntrPar%Yaw_RegDelay) THEN
             ! Yaw out, direction depends on heading 
-            LocalVar%Yaw_Out = 1        ! Get into yaw out state, where restart delay is active
+            LocalVar%Yaw_Out = 1        ! Get into yaw out state, where restart delay is active.  
             LocalVar%StElapsedTime = 0
         ENDIF
 
-        write(402,*) LocalVar%StElapsedTime, CntrPar%Yaw_RegDelay, LocalVar%NacVane, LocalVar%YawRateDir
-        write(401,*) LocalVar%Time, LocalVar%NacHeading, LocalVar%PrevHeading, CntrPar%Yaw_RegOutAngle
 
-        ! Yaw maneuver
+        ! Yaw maneuvers
+
+        ! Fault cases
         IF (LocalVar%Fault == 1) THEN
 
             ! Only yaw out once, when LocalVar%Fault_Brake = 1, stop
@@ -348,11 +350,13 @@ CONTAINS
             ENDIF
 
 
-        ELSE   
+        ELSE   ! Yaw_Out and Yaw_Seek
+
+            ! If already Yaw_Out and restart timer longer than delay
             IF ((LocalVar%ReElapsedTime > CntrPar%Yaw_RegRestartDelay) .AND. LocalVar%Yaw_Out == 1) THEN
                 ! Note that we stay in Yaw_Out until speed < Yaw_StopRegSpeed, logic is below
                 
-                ! Save current heading
+                ! Save current heading and set direction, the only happens first timestep because YawRateDir ~= 0 after
                 IF (LocalVar%YawRateDir == 0) THEN
                     LocalVar%PrevHeading = LocalVar%NacHeading
                 
@@ -391,6 +395,8 @@ CONTAINS
                         LocalVar%ReElapsedTime = 0
                     ENDIF
                 ENDIF
+            
+            ! Yaw_Seek logic
             ELSEIF (LocalVar%Yaw_Seek == 1) THEN
                 ! Yaw in to increase speed
 
@@ -444,9 +450,6 @@ CONTAINS
             ENDIF 
         ENDIF
 
-        write(403,*) LocalVar%StElapsedTime, CntrPar%Yaw_RegDelay, LocalVar%NacVaneF, LocalVar%YawRateDir
-
-
         ! Output yaw rate command in rad/s
         avrSWAP(48) = LocalVar%YawRate * D2R
 
@@ -484,11 +487,12 @@ SUBROUTINE CheckFault(CntrPar, LocalVar)
             LocalVar%Fault = 1
         ENDIF
 
-        ! Increment Fault_BrakeTimer each iteration
+        ! Increment Fault_BrakeTimer when Fault_Brake triggered after yaw out for fault
         IF (LocalVar%Fault_Brake > 0) THEN
             LocalVar%Fault_BrakeTimer = LocalVar%Fault_BrakeTimer + LocalVar%DT
         ENDIF 
 
+        ! Fault_Brake state of 2 means brake is on and locked for remainder of simulation. Fault_Brake should not leave 2
         IF (LocalVar%Fault_BrakeTimer > CntrPar%Fault_BrakeTime) THEN
             LocalVar%Fault_Brake = 2_IntKi
         ENDIF 
@@ -517,6 +521,7 @@ SUBROUTINE BrakeControl(avrSWAP, CntrPar, LocalVar, ErrVar)
         
         
         IF (LocalVar%Fault_Brake == 2) THEN
+            ! Brake enabled for remainder of simulation
             LocalVar%BrakeTqC = CntrPar%Fault_BrakeTq
         
         ELSE
@@ -534,7 +539,7 @@ SUBROUTINE BrakeControl(avrSWAP, CntrPar, LocalVar, ErrVar)
     END SUBROUTINE BrakeControl
 
 !-------------------------------------------------------------------------------------------------------------------------------
-
+    ! This is the utility scale yaw controller, not used if Y_ControlMode = 3 for QED control
     SUBROUTINE YawRateControl(avrSWAP, CntrPar, LocalVar, objInst, zmqVar, DebugVar, ErrVar)
         ! Yaw rate controller
         !       Y_ControlMode = 0, No yaw control
