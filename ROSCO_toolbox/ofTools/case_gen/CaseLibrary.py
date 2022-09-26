@@ -525,6 +525,17 @@ def sweep_ps_percent(start_group, **control_sweep_opts):
 
         return case_inputs_control
 
+def sweep_timestep(start_group, **control_sweep_opts):
+    if 'DT' in control_sweep_opts:
+        DT = control_sweep_opts['DT']
+    else:
+        raise Exception('Define DT to sweep or program something else.')
+
+    case_inputs_control = {}
+    case_inputs_control[('Fst','DT')] = {'vals': DT, 'group': start_group}
+
+    return case_inputs_control
+
 
 #  def sweep_pc_mode(cont_yaml,omega=np.linspace(.05,.35,8,endpoint=True).tolist(),zeta=[1.5],group=2):
     
