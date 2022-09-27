@@ -228,15 +228,15 @@ CONTAINS
         CALL ParseInput(UnControllerParameters,CurLine,'LoggingLevel',accINFILE(1),CntrPar%LoggingLevel,ErrVar)
         CALL ReadEmptyLine(UnControllerParameters,CurLine)
 
-        !------------ VS TORQUE CONTROL CONSTANTS ----------------
-        CALL ReadEmptyLine(UnControllerParameters,CurLine)
-        CALL ParseInput(UnControllerParameters,CurLine,'VS_SpdTqFile',accINFILE(1),CntrPar%VS_SpdTqFile,ErrVar)
-        CALL ReadEmptyLine(UnControllerParameters,CurLine)
-
         !----------------- FILTER CONSTANTS ---------------------
         CALL ReadEmptyLine(UnControllerParameters,CurLine)
         CALL ParseInput(UnControllerParameters,CurLine,'F_LPFCornerFreq',accINFILE(1),CntrPar%F_LPFCornerFreq,ErrVar)
         CALL ParseInput(UnControllerParameters,CurLine,'MA_VaneWindow',accINFILE(1),CntrPar%MA_VaneWindow,ErrVar)
+        CALL ReadEmptyLine(UnControllerParameters,CurLine)
+
+        !------------ VS TORQUE CONTROL CONSTANTS ----------------
+        CALL ReadEmptyLine(UnControllerParameters,CurLine)
+        CALL ParseInput(UnControllerParameters,CurLine,'VS_SpdTqFile',accINFILE(1),CntrPar%VS_SpdTqFile,ErrVar)
         CALL ReadEmptyLine(UnControllerParameters,CurLine)
 
         !------- YAW SPEED REGULATION ----------------------------------------------
