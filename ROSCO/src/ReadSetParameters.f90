@@ -228,6 +228,11 @@ CONTAINS
         CALL ParseInput(UnControllerParameters,CurLine,'LoggingLevel',accINFILE(1),CntrPar%LoggingLevel,ErrVar)
         CALL ReadEmptyLine(UnControllerParameters,CurLine)
 
+        !------------ VS TORQUE CONTROL CONSTANTS ----------------
+        CALL ReadEmptyLine(UnControllerParameters,CurLine)
+        CALL ParseInput(UnControllerParameters,CurLine,'VS_SpdTqFile',accINFILE(1),CntrPar%VS_SpdTqFile,ErrVar)
+        CALL ReadEmptyLine(UnControllerParameters,CurLine)
+
         !----------------- FILTER CONSTANTS ---------------------
         CALL ReadEmptyLine(UnControllerParameters,CurLine)
         CALL ParseInput(UnControllerParameters,CurLine,'F_LPFCornerFreq',accINFILE(1),CntrPar%F_LPFCornerFreq,ErrVar)
@@ -340,7 +345,6 @@ CONTAINS
         CALL ParseAry(UnControllerParameters, CurLine, 'VS_KP', CntrPar%VS_KP, CntrPar%VS_n, accINFILE(1), ErrVar )
         CALL ParseAry(UnControllerParameters, CurLine, 'VS_KI', CntrPar%VS_KI, CntrPar%VS_n, accINFILE(1), ErrVar )
         CALL ParseInput(UnControllerParameters,CurLine,'VS_TSRopt',accINFILE(1),CntrPar%VS_TSRopt,ErrVar)
-        CALL ParseInput(UnControllerParameters,CurLine,'VS_SpdTqFile',accINFILE(1),CntrPar%VS_SpdTqFile,ErrVar)
         CALL ReadEmptyLine(UnControllerParameters,CurLine)
 
         !------- Setpoint Smoother --------------------------------

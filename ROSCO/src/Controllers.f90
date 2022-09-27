@@ -183,44 +183,8 @@ CONTAINS
             LocalVar%VS_MaxTq = CntrPar%VS_RtTq
         ENDIF
 
-        ! Optimal Tip-Speed-Ratio tracking controller
-        IF ((CntrPar%VS_ControlMode == 2) .OR. (CntrPar%VS_ControlMode == 3)) THEN
-            ! Constant Power, update VS_MaxTq
-            IF (CntrPar%VS_ControlMode == 3) THEN
-                LocalVar%VS_MaxTq = min((CntrPar%VS_RtPwr/(CntrPar%VS_GenEff/100.0))/LocalVar%GenSpeedF, CntrPar%VS_MaxTq)
-            END IF
-
-            ! PI controller
-            LocalVar%GenTq = PIController(LocalVar%VS_SpdErr, CntrPar%VS_KP(1), CntrPar%VS_KI(1), CntrPar%VS_MinTq, LocalVar%VS_MaxTq, LocalVar%DT, LocalVar%VS_LastGenTrq, LocalVar%piP, LocalVar%restart, objInst%instPI)
-            LocalVar%GenTq = saturate(LocalVar%GenTq, CntrPar%VS_MinTq, LocalVar%VS_MaxTq)
-        
-        ! K*Omega^2 control law with PI torque control in transition regions
-        ELSEIF ((CntrPar%VS_ControlMode == 0) .OR. (CntrPar%VS_ControlMode == 1)) THEN
-            ! Update PI loops for region 1.5 and 2.5 PI control
-            LocalVar%GenArTq = PIController(LocalVar%VS_SpdErrAr, CntrPar%VS_KP(1), CntrPar%VS_KI(1), CntrPar%VS_MaxOMTq, CntrPar%VS_ArSatTq, LocalVar%DT, CntrPar%VS_MaxOMTq, LocalVar%piP, LocalVar%restart, objInst%instPI)
-            LocalVar%GenBrTq = PIController(LocalVar%VS_SpdErrBr, CntrPar%VS_KP(1), CntrPar%VS_KI(1), CntrPar%VS_MinTq, CntrPar%VS_MinOMTq, LocalVar%DT, CntrPar%VS_MinOMTq, LocalVar%piP, LocalVar%restart, objInst%instPI)
-            
-            ! The action
-            IF (LocalVar%VS_State == 1) THEN ! Region 1.5
-                LocalVar%GenTq = LocalVar%GenBrTq
-            ELSEIF (LocalVar%VS_State == 2) THEN ! Region 2
-                LocalVar%GenTq = CntrPar%VS_Rgn2K*LocalVar%GenSpeedF*LocalVar%GenSpeedF
-            ELSEIF (LocalVar%VS_State == 3) THEN ! Region 2.5
-                LocalVar%GenTq = LocalVar%GenArTq
-            ELSEIF (LocalVar%VS_State == 4) THEN ! Region 3, constant torque
-                LocalVar%GenTq = CntrPar%VS_RtTq
-            ELSEIF (LocalVar%VS_State == 5) THEN ! Region 3, constant power
-                LocalVar%GenTq = (CntrPar%VS_RtPwr/(CntrPar%VS_GenEff/100.0))/LocalVar%GenSpeedF
-            END IF
-            
-            ! Saturate
-            LocalVar%GenTq = saturate(LocalVar%GenTq, CntrPar%VS_MinTq, CntrPar%VS_MaxTq)
-        
-        ELSEIF (CntrPar%VS_ControlMode == 4) THEN
         ! Lookup table control based on torque speed curve
-            LocalVar%GenTq = interp1d(CntrPar%VS_SpdTq(:,1),CntrPar%VS_SpdTq(:,2),LocalVar%GenSpeedF * RPS2RPM,ErrVar)
-        
-        ENDIF
+        LocalVar%GenTq = interp1d(CntrPar%VS_SpdTq(:,1),CntrPar%VS_SpdTq(:,2),LocalVar%GenSpeedF * RPS2RPM,ErrVar)
 
 
         ! Saturate the commanded torque using the maximum torque limit:
