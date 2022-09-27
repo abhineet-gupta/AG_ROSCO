@@ -316,8 +316,9 @@ CONTAINS
 
         ELSE   ! Yaw_Out and Yaw_Seek
 
-            ! If already Yaw_Out and restart timer longer than delay
-            IF ((LocalVar%ReElapsedTime > CntrPar%Yaw_RegRestartDelay) .AND. LocalVar%Yaw_Out == 1) THEN
+            ! Yaw_Out = 1 when yawing out, Yaw_Out = 2 when waiting to restart
+            IF (LocalVar%Yaw_Out == 1) THEN
+                ! (LocalVar%Yaw_Out == 2 .AND. LocalVar%ReElapsedTime > CntrPar%Yaw_RegRestartDelay)) THEN
                 ! Note that we stay in Yaw_Out until speed < Yaw_StopRegSpeed, logic is below
                 
                 ! Save current heading and set direction, the only happens first timestep because YawRateDir ~= 0 after
@@ -345,6 +346,7 @@ CONTAINS
                         LocalVar%YawRateDir = 0  
                         LocalVar%YawRate = 0
                         LocalVar%ReElapsedTime = 0
+                        LocalVar%Yaw_Out = 2
                     ENDIF
 
 
@@ -357,6 +359,7 @@ CONTAINS
                         LocalVar%YawRateDir = 0  
                         LocalVar%YawRate = 0
                         LocalVar%ReElapsedTime = 0
+                        LocalVar%Yaw_Out = 2
                     ENDIF
                 ENDIF
             
@@ -404,9 +407,13 @@ CONTAINS
         ENDIF
 
         ! Stop yawing out when speed < Yaw_StopRegSpeed
-        IF (LocalVar%Yaw_Out == 1) THEN
+        IF (LocalVar%Yaw_Out == 2) THEN
             
             LocalVar%ReElapsedTime = LocalVar%ReElapsedTime + LocalVar%DT   ! Increment restart timer
+
+            IF (LocalVar%ReElapsedTime > CntrPar%Yaw_RegRestartDelay) THEN
+                LocalVar%Yaw_Out = 1
+            ENDIF
 
             IF (LocalVar%GenSpeedF < (CntrPar%Yaw_StopRegSpeed / RPS2RPM)) THEN
                 LocalVar%Yaw_Out = 0
