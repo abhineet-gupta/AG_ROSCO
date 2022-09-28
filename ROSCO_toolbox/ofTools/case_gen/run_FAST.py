@@ -240,7 +240,7 @@ if __name__ == "__main__":
 
         # QED Power curve
         r.tuning_yaml   = 'QED.yaml'
-        r.save_dir      = '/Users/dzalkind/Tools/ROSCO_QED/outputs/QED_DLC_8'
+        r.save_dir      = '/Users/dzalkind/Tools/ROSCO_QED/outputs/QED_DLC_12'
         r.wind_case_fcn = cl.user_hh
         r.wind_case_opts    = {
             'TMax': 150.,
@@ -258,9 +258,54 @@ if __name__ == "__main__":
                                '/Users/dzalkind/Tools/ROSCO_QED/Test_Cases/QED/Wind/NWP20.0.wnd'
                                ]
             }
+        # r.case_inputs = {}
+        # r.case_inputs[('AeroDyn15','UAMod')] = {'vals': [2], 'group': 0}
         # r.control_sweep_fcn = cl.sweep_ps_percent
         r.n_cores = 6
 
+    elif sim_config == 17:
+
+        # QED Power curve
+        r.tuning_yaml   = 'QED.yaml'
+        r.save_dir      = '/Users/dzalkind/Tools/ROSCO_QED/outputs/QED_Turb_5'
+        r.wind_case_fcn = cl.turb_bts
+        r.wind_case_opts    = {
+            'TMax': 720.,
+            'wind_filenames': [
+                               '/Users/dzalkind/Tools/WEIS-1/outputs/02_QED/wind/IEA15_NTM_U4.000000_Seed1501552846.0.bts',
+                               '/Users/dzalkind/Tools/WEIS-1/outputs/02_QED/wind/IEA15_NTM_U6.000000_Seed488200390.0.bts',
+                                '/Users/dzalkind/Tools/WEIS-1/outputs/02_QED/wind/IEA15_NTM_U10.000000_Seed680233354.0.bts',
+                               '/Users/dzalkind/Tools/WEIS-1/outputs/02_QED/wind/IEA15_NTM_U12.000000_Seed438466540.0.bts',
+                               '/Users/dzalkind/Tools/WEIS-1/outputs/02_QED/wind/IEA15_NTM_U14.000000_Seed1712329281.0.bts',
+                               '/Users/dzalkind/Tools/WEIS-1/outputs/02_QED/wind/IEA15_NTM_U14.000000_Seed1712329281.0.bts',
+                               '/Users/dzalkind/Tools/WEIS-1/outputs/02_QED/wind/IEA15_NTM_U16.000000_Seed1380152456.0.bts',
+                               '/Users/dzalkind/Tools/WEIS-1/outputs/02_QED/wind/IEA15_NTM_U18.000000_Seed1452245847.0.bts',
+                               '/Users/dzalkind/Tools/WEIS-1/outputs/02_QED/wind/IEA15_NTM_U20.000000_Seed2122694022.0.bts',
+                               ]
+            }
+        # r.control_sweep_fcn = cl.sweep_ps_percent
+        r.n_cores = 5
+
+    elif sim_config == 18:
+
+        # QED Power curve
+        r.tuning_yaml   = 'QED.yaml'
+        r.save_dir      = '/Users/dzalkind/Tools/ROSCO_QED/outputs/QED_Num_5'
+        r.wind_case_fcn = cl.user_hh
+        r.wind_case_opts    = {
+            'TMax': 150.,
+            'wind_filenames': [
+                               '/Users/dzalkind/Tools/ROSCO_QED/Test_Cases/QED/Wind/ECD-R.wnd',
+                               ]
+            }
+        # r.control_sweep_fcn = cl.sweep_timestep
+        # r.control_sweep_opts = {
+        #     'DT': [0.0005,0.001,0.002,0.003]
+        # }
+        r.case_inputs = {}
+        r.case_inputs[('AeroDyn15','UAMod')] = {'vals': [2,3,4,5,6], 'group': 2}
+        r.n_cores = 5
+        
         
 
     else:
