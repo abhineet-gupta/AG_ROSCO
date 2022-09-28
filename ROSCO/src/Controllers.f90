@@ -385,7 +385,7 @@ CONTAINS
                 
                 ! Stop yawing
                 IF (LocalVar%YawRateDir > 0) THEN
-                    IF (LocalVar%NacHeading - LocalVar%PrevHeading > CntrPar%Yaw_RegOutAngle) THEN
+                    IF (LocalVar%NacHeading - LocalVar%PrevHeading > CntrPar%Yaw_SeekInAngle) THEN
                         ! Stop yawing
                         LocalVar%YawRateDir = 0  
                         LocalVar%YawRate = 0
@@ -395,7 +395,7 @@ CONTAINS
 
 
                 ELSEIF (LocalVar%YawRateDir < 0) THEN
-                    IF (LocalVar%NacHeading - LocalVar%PrevHeading < -CntrPar%Yaw_RegOutAngle) THEN
+                    IF (LocalVar%NacHeading - LocalVar%PrevHeading < -CntrPar%Yaw_SeekInAngle) THEN
                         ! Stop yawing
                         LocalVar%YawRateDir = 0  
                         LocalVar%YawRate = 0
