@@ -240,48 +240,50 @@ if __name__ == "__main__":
 
         # QED Power curve
         r.tuning_yaml   = 'QED.yaml'
-        r.save_dir      = '/Users/dzalkind/Tools/ROSCO_QED/outputs/QED_DLC_12'
+        r.save_dir      = os.path.join(rosco_dir,'outputs/QED_DLCs')
         r.wind_case_fcn = cl.user_hh
+
+        wind_files = [
+            'ECD-R.wnd',
+            'ECD+R.wnd',
+            'EDC-I.wnd',
+            'EDC-O.wnd',
+            'EDC+I.wnd',
+            'EDC+O.wnd',
+            'EOGI.wnd',
+            'EOGO.wnd',
+            'EWM01.wnd',
+            'EWM50.wnd',
+            'NWP20.0.wnd'
+            ]
+        wind_dir = os.path.join(rosco_dir,'Test_Cases/QED/Wind/')
         r.wind_case_opts    = {
             'TMax': 150.,
-            'wind_filenames': [
-                               '/Users/dzalkind/Tools/ROSCO_QED/Test_Cases/QED/Wind/ECD-R.wnd',
-                               '/Users/dzalkind/Tools/ROSCO_QED/Test_Cases/QED/Wind/ECD+R.wnd',
-                               '/Users/dzalkind/Tools/ROSCO_QED/Test_Cases/QED/Wind/EDC-I.wnd',
-                               '/Users/dzalkind/Tools/ROSCO_QED/Test_Cases/QED/Wind/EDC-O.wnd',
-                               '/Users/dzalkind/Tools/ROSCO_QED/Test_Cases/QED/Wind/EDC+I.wnd',
-                               '/Users/dzalkind/Tools/ROSCO_QED/Test_Cases/QED/Wind/EDC+O.wnd',
-                               '/Users/dzalkind/Tools/ROSCO_QED/Test_Cases/QED/Wind/EOGI.wnd',
-                               '/Users/dzalkind/Tools/ROSCO_QED/Test_Cases/QED/Wind/EOGO.wnd',
-                               '/Users/dzalkind/Tools/ROSCO_QED/Test_Cases/QED/Wind/EWM01.wnd',
-                               '/Users/dzalkind/Tools/ROSCO_QED/Test_Cases/QED/Wind/EWM50.wnd',
-                               '/Users/dzalkind/Tools/ROSCO_QED/Test_Cases/QED/Wind/NWP20.0.wnd'
-                               ]
+            'wind_filenames': [os.path.join(wind_dir,f) for f in wind_files]
             }
-        # r.case_inputs = {}
-        # r.case_inputs[('AeroDyn15','UAMod')] = {'vals': [2], 'group': 0}
-        # r.control_sweep_fcn = cl.sweep_ps_percent
         r.n_cores = 6
 
     elif sim_config == 17:
 
         # QED Power curve
         r.tuning_yaml   = 'QED.yaml'
-        r.save_dir      = '/Users/dzalkind/Tools/ROSCO_QED/outputs/QED_Turb_5'
+        r.save_dir      = os.path.join(rosco_dir,'outputs/QED_Turb')
         r.wind_case_fcn = cl.turb_bts
+        wind_dir = '/Users/dzalkind/Tools/WEIS-1/outputs/02_QED/wind/'  # you must set this to where you have the files
+        wind_files = [
+            'IEA15_NTM_U4.000000_Seed1501552846.0.bts',
+            'IEA15_NTM_U6.000000_Seed488200390.0.bts',
+            'IEA15_NTM_U10.000000_Seed680233354.0.bts',
+            'IEA15_NTM_U12.000000_Seed438466540.0.bts',
+            'IEA15_NTM_U14.000000_Seed1712329281.0.bts',
+            'IEA15_NTM_U14.000000_Seed1712329281.0.bts',
+            'IEA15_NTM_U16.000000_Seed1380152456.0.bts',
+            'IEA15_NTM_U18.000000_Seed1452245847.0.bts',
+            'IEA15_NTM_U20.000000_Seed2122694022.0.bts',
+            ] 
         r.wind_case_opts    = {
             'TMax': 720.,
-            'wind_filenames': [
-                               '/Users/dzalkind/Tools/WEIS-1/outputs/02_QED/wind/IEA15_NTM_U4.000000_Seed1501552846.0.bts',
-                               '/Users/dzalkind/Tools/WEIS-1/outputs/02_QED/wind/IEA15_NTM_U6.000000_Seed488200390.0.bts',
-                                '/Users/dzalkind/Tools/WEIS-1/outputs/02_QED/wind/IEA15_NTM_U10.000000_Seed680233354.0.bts',
-                               '/Users/dzalkind/Tools/WEIS-1/outputs/02_QED/wind/IEA15_NTM_U12.000000_Seed438466540.0.bts',
-                               '/Users/dzalkind/Tools/WEIS-1/outputs/02_QED/wind/IEA15_NTM_U14.000000_Seed1712329281.0.bts',
-                               '/Users/dzalkind/Tools/WEIS-1/outputs/02_QED/wind/IEA15_NTM_U14.000000_Seed1712329281.0.bts',
-                               '/Users/dzalkind/Tools/WEIS-1/outputs/02_QED/wind/IEA15_NTM_U16.000000_Seed1380152456.0.bts',
-                               '/Users/dzalkind/Tools/WEIS-1/outputs/02_QED/wind/IEA15_NTM_U18.000000_Seed1452245847.0.bts',
-                               '/Users/dzalkind/Tools/WEIS-1/outputs/02_QED/wind/IEA15_NTM_U20.000000_Seed2122694022.0.bts',
-                               ]
+            'wind_filenames': [os.path.join(wind_dir,f) for f in wind_files]
             }
         # r.control_sweep_fcn = cl.sweep_ps_percent
         r.n_cores = 5
