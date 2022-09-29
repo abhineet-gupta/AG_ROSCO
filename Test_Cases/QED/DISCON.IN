@@ -9,7 +9,7 @@
 3.00000             ! MA_VaneWindow     - Moving average time window for wind vane signal, [sec]
 
 !------- VS TORQUE CONTROL ------------------------------------------------
-"/Users/dzalkind/Tools/ROSCO_QED/Test_Cases/QED/spd_trq_gen.dat"            ! VS_SpdTqFile  	- Speed-torque lookup table for torque control
+"spd_trq_gen.dat"            ! VS_SpdTqFile  	- Speed-torque lookup table for torque control
 
 !------- YAW SPEED REGULATION ----------------------------------------------
 75.00000                ! Yaw_RegStartSpeed	    - Speed used to trigger yaw-out speed regulation [rpm] 
