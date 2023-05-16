@@ -189,7 +189,7 @@ class run_FAST_ROSCO():
 if __name__ == "__main__":
 
     # Simulation config
-    sim_config = 16
+    sim_config = 17
     
     r = run_FAST_ROSCO()
 
@@ -250,7 +250,7 @@ if __name__ == "__main__":
 
         # QED Power curve
         r.tuning_yaml   = 'QED.yaml'
-        r.save_dir      = os.path.join(rosco_dir,'outputs/QED_DLCs')
+        r.save_dir      = os.path.join(rosco_dir,'outputs/QED_DLCs_0')
         r.wind_case_fcn = cl.user_hh
 
         wind_files = [
@@ -271,52 +271,76 @@ if __name__ == "__main__":
             'TMax': 150.,
             'wind_filenames': [os.path.join(wind_dir,f) for f in wind_files]
             }
-        r.n_cores = 6
+        r.n_cores = 4
 
     elif sim_config == 17:
 
         # QED Power curve
         r.tuning_yaml   = 'QED.yaml'
-        r.save_dir      = os.path.join(rosco_dir,'outputs/QED_Turb')
+        r.save_dir      = os.path.join(rosco_dir,'outputs/QED_Turb_1')
         r.wind_case_fcn = cl.turb_bts
-        wind_dir = '/Users/dzalkind/Tools/WEIS-1/outputs/02_QED/wind/'  # you must set this to where you have the files
+        wind_dir = '/Users/dzalkind/Projects/QED_Control/WEIS/outputs/02_QED_1_FixTS/wind/'  # you must set this to where you have the files
         wind_files = [
-            'IEA15_NTM_U4.000000_Seed1501552846.0.bts',
-            'IEA15_NTM_U6.000000_Seed488200390.0.bts',
-            'IEA15_NTM_U10.000000_Seed680233354.0.bts',
-            'IEA15_NTM_U12.000000_Seed438466540.0.bts',
-            'IEA15_NTM_U14.000000_Seed1712329281.0.bts',
-            'IEA15_NTM_U14.000000_Seed1712329281.0.bts',
-            'IEA15_NTM_U16.000000_Seed1380152456.0.bts',
-            'IEA15_NTM_U18.000000_Seed1452245847.0.bts',
-            'IEA15_NTM_U20.000000_Seed2122694022.0.bts',
+            'QED_NTM_U3.000000_Seed1501552846.0.bts',
             ] 
         r.wind_case_opts    = {
             'TMax': 720.,
             'wind_filenames': [os.path.join(wind_dir,f) for f in wind_files]
             }
         # r.control_sweep_fcn = cl.sweep_ps_percent
-        r.n_cores = 5
+        r.n_cores = 1
 
     elif sim_config == 18:
+        # QED Parked Cases
 
-        # QED Power curve
+        parked_config = {}
+        parked_config[('ServoDyn','YCMode')] = {'vals':[0], 'group':0} 
+        parked_config[('ServoDyn','YawNeut')] = {'vals':[75], 'group':0} 
+        parked_config[('ServoDyn','HSSBrMode')] = {'vals':[1], 'group':0} 
+        parked_config[('ServoDyn','THSSBrDp')] = {'vals':[0], 'group':0} 
+        parked_config[('ServoDyn','HSSBrDT')] = {'vals':[0], 'group':0} 
+        parked_config[('ServoDyn','HSSBrTqF')] = {'vals':[3000], 'group':0} 
+        parked_config[('ElastoDyn','NacYaw')] = {'vals':[75], 'group':0} 
+        parked_config[('ElastoDyn','RotSpeed')] = {'vals':[0], 'group':0} 
+        parked_config[('AeroDyn15','WakeMod')] = {'vals':[0], 'group':0} 
+        parked_config[('AeroDyn15','AFAeroMod')] = {'vals':[1], 'group':0} 
+
         r.tuning_yaml   = 'QED.yaml'
-        r.save_dir      = '/Users/dzalkind/Tools/ROSCO_QED/outputs/QED_Num_5'
+        r.save_dir      = os.path.join(rosco_dir,'outputs/QED_Parked_0')
         r.wind_case_fcn = cl.user_hh
+
+        r.case_inputs = parked_config
+
+        wind_files = [
+            'EWM01.wnd',
+            'EWM50.wnd',
+            ]
+        wind_dir = os.path.join(rosco_dir,'Test_Cases/QED/Wind/')
         r.wind_case_opts    = {
             'TMax': 150.,
-            'wind_filenames': [
-                               '/Users/dzalkind/Tools/ROSCO_QED/Test_Cases/QED/Wind/ECD-R.wnd',
-                               ]
+            'wind_filenames': [os.path.join(wind_dir,f) for f in wind_files]
             }
-        # r.control_sweep_fcn = cl.sweep_timestep
-        # r.control_sweep_opts = {
-        #     'DT': [0.0005,0.001,0.002,0.003]
-        # }
-        r.case_inputs = {}
-        r.case_inputs[('AeroDyn15','UAMod')] = {'vals': [2,3,4,5,6], 'group': 2}
-        r.n_cores = 5
+        r.n_cores = 2
+
+    # elif sim_config == 18:
+
+    #     # QED Power curve
+    #     r.tuning_yaml   = 'QED.yaml'
+    #     r.save_dir      = '/Users/dzalkind/Tools/ROSCO_QED/outputs/QED_Num_5'
+    #     r.wind_case_fcn = cl.user_hh
+    #     r.wind_case_opts    = {
+    #         'TMax': 150.,
+    #         'wind_filenames': [
+    #                            '/Users/dzalkind/Tools/ROSCO_QED/Test_Cases/QED/Wind/ECD-R.wnd',
+    #                            ]
+    #         }
+    #     # r.control_sweep_fcn = cl.sweep_timestep
+    #     # r.control_sweep_opts = {
+    #     #     'DT': [0.0005,0.001,0.002,0.003]
+    #     # }
+    #     r.case_inputs = {}
+    #     r.case_inputs[('AeroDyn15','UAMod')] = {'vals': [2,3,4,5,6], 'group': 2}
+    #     r.n_cores = 5
         
         
 
