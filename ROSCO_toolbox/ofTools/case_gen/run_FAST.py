@@ -52,6 +52,7 @@ class run_FAST_ROSCO():
             self.base_name = os.path.split(self.tuning_yaml)[-1].split('.')[0]
         
         run_dir = os.path.join(self.save_dir,self.base_name,self.wind_case_fcn.__name__,sweep_name)
+        run_dir = os.path.join(self.save_dir)   # Simplify for Tim
 
         
         # Start with tuning yaml definition of controller
@@ -124,6 +125,14 @@ class run_FAST_ROSCO():
         # Generate cases
         case_list, case_name_list = CaseGen_General(case_inputs, dir_matrix=run_dir, namebase=self.base_name)
         channels = cl.set_channels()
+
+        # Print simple table for Tim
+        with open(os.path.join(run_dir,'case_table.txt'),'w') as f:
+            for case, name in zip(case_list,case_name_list):
+                if ('InflowWind', 'Filename_Uni') in case:
+                    f.write(f"{name}\t\t{case[('InflowWind', 'Filename_Uni')].split('/')[-1]}\n")
+                else:
+                    f.write(f"{name}\t\t{case[('InflowWind', 'FileName_BTS')].split('/')[-1]}\n")
 
         # Management of parallelization, leave in for now
         if MPI:
