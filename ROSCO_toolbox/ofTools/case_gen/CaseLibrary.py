@@ -322,6 +322,8 @@ def turb_bts(**wind_case_opts):
         wind_inputs (list of string wind inputs filenames)
     '''
 
+    ICs = True
+
     if 'TMax' in wind_case_opts:
         TMax = wind_case_opts['TMax']
     else:
@@ -329,12 +331,30 @@ def turb_bts(**wind_case_opts):
 
     if 'wind_filenames' not in wind_case_opts:
         raise Exception('Define wind_filenames when using turb_bts case generator')
+    
+    if ICs: # Do ICs
+    
+        mean_wind_speeds = [float(wind_file.split('NTM_U')[1][:5]) for wind_file in wind_case_opts['wind_filenames']]
+
+        ss = pd.read_pickle('/Users/dzalkind/Tools/ROSCO_QED/Test_Cases/QED/steady.p')
+
+        U = ss['Wind1VelX']['mean'].to_numpy()
+        yaw = ss['NacYaw']['mean'].to_numpy()
+        rot_speed = ss['RotSpeed']['mean'].to_numpy()
+
+        yaws = np.interp(mean_wind_speeds,U,yaw).tolist()
+        spds = np.interp(mean_wind_speeds,U,rot_speed).tolist()
 
     # wind inflow
     case_inputs = base_op_case()
     case_inputs[("Fst","TMax")] = {'vals':[TMax], 'group':0}
     case_inputs[("InflowWind","WindType")] = {'vals':[3], 'group':0}
     case_inputs[("InflowWind","FileName_BTS")] = {'vals':wind_case_opts['wind_filenames'], 'group':1}
+    
+    if ICs:
+        case_inputs[("ElastoDyn","NacYaw")] = {'vals':yaws, 'group':1}
+        case_inputs[("ElastoDyn","RotSpeed")] = {'vals':spds, 'group':1}
+        case_inputs[("ServoDyn","YawNeut")] = {'vals':yaws, 'group':1}
 
     return case_inputs
 
