@@ -12,6 +12,7 @@
 import numpy as np
 import os
 import datetime
+import control as ct
 from scipy import interpolate, integrate
 from rosco.toolbox.utilities import list_check
 from scipy import optimize
@@ -257,10 +258,13 @@ class Controller():
         # -------------Load Parameters ------------- #
         # Re-define Turbine Parameters for shorthand
         J = turbine.J                           # Total rotor inertial (kg-m^2) 
+        J_phi = turbine.ED_pitch_inertia        # Total pitch inertia
         rho = turbine.rho                       # Air density (kg/m^3)
         R = turbine.rotor_radius                    # Rotor radius (m)
         Ar = np.pi*R**2                         # Rotor area (m^2)
         Ng = turbine.Ng                         # Gearbox ratio (-)
+        hubHt = turbine.hubHt                   # Hub height
+        hubHt_ptfmref = turbine.hubHt_ptfmref   # Hub height from platform reference point
         rated_rotor_speed = turbine.rated_rotor_speed               # Rated rotor speed (rad/s)
 
         # ------------- Saturation Limits --------------- #
@@ -370,6 +374,7 @@ class Controller():
             # Calculate Cp Surface gradients
             dCp_beta[i], dCp_TSR[i] = turbine.Cp.interp_gradient(pitch_op[i],TSR_op[i]) 
             dCt_beta[i], dCt_TSR[i] = turbine.Ct.interp_gradient(pitch_op[i],TSR_op[i]) 
+            dCq_beta[i], dCq_TSR[i] = turbine.Cq.interp_gradient(pitch_op[i],TSR_op[i]) 
 
             # Thrust
             Ct_TSR      = np.ndarray.flatten(turbine.Ct.interp_surface(turbine.pitch_initial_rad, TSR_op[i]))     # all Cp values for a given tsr
@@ -403,13 +408,20 @@ class Controller():
         dCp_dTSR    = dCp_TSR/np.diff(TSR_initial)[0]
         dCt_dbeta   = dCt_beta/np.diff(pitch_initial_rad)[0]
         dCt_dTSR    = dCt_TSR/np.diff(TSR_initial)[0]
+        dCq_dbeta   = dCq_beta/np.diff(pitch_initial_rad)[0]
+        dCq_dTSR    = dCq_TSR/np.diff(TSR_initial)[0]
 
         # Linearized system derivatives, equations from https://wes.copernicus.org/articles/7/53/2022/wes-7-53-2022.pdf
+        dlambda_domega  = R/v/Ng
+        dlambda_dv      = -(TSR_op/v)
+        
         dtau_dbeta      = Ng/2*rho*Ar*R*(1/TSR_op)*dCp_dbeta*v**2  # (26)
         dtau_dlambda    = Ng/2*rho*Ar*R*v**2*(1/(TSR_op**2))*(dCp_dTSR*TSR_op - Cp_op)   # (7)
-        dlambda_domega  = R/v/Ng
         dtau_domega     = dtau_dlambda*dlambda_domega
-        dlambda_dv      = -(TSR_op/v)
+        
+        dfa_dbeta      = Ng/2*rho*Ar*R*(1/TSR_op)*dCp_dbeta*v**2  # (26)
+        dfa_dlambda    = Ng/2*rho*Ar*R*v**2*(1/(TSR_op**2))*(dCp_dTSR*TSR_op - Cp_op)   # (7)
+        dfa_domega     = dtau_dlambda*dlambda_domega
 
         Pi_beta         = 1/2 * rho * Ar * v**2 * dCt_dbeta
         Pi_omega        = 1/2 * rho * Ar * R * v * dCt_dTSR
@@ -686,6 +698,23 @@ class Controller():
         # if self.Fl_Mode > 0 and self.FlTq_Mode > 0:
         #     self.Kp_float = self.Kp_float / 2.0
         #     self.KpTq_float = self.KpTq_float / 2.0
+
+        # Calc stability margin
+        dof2model = {}
+        dof2model['A'] = np.array([
+            [0,1,0,0],
+            [0,Ng/J*dtau_domega,0,-Ng/J*hubHt_ptfmref*dtau_dv],
+            [0,0,0,1],
+            [0,hubHt_ptfmref/J_phi * dfa_domega,-K_phi/J_phi,-1/J_phi * (D_phi + hubHt_ptfmref**2*dfa_dv)],
+        ])
+        dof2model['B'] = np.array([
+            [0,1,0,0],
+            [0,Ng/J*dtau_domega,0,-Ng/J*hubHt_ptfmref*dtau_dv],
+            [0,0,0,1],
+            [0,hubHt_ptfmref/J_phi * dfa_domega,-K_phi/J_phi,-1/J_phi * (D_phi + hubHt_ptfmref**2*dfa_dv)],
+        ])
+
+
         
         # Flap actuation 
         if self.Flp_Mode >= 1:
@@ -809,6 +838,17 @@ class Controller():
             raise ValueError('flp_kp_norm and flp_tau must be nonzero for Flp_Mode >= 1')
         self.Kp_flap = self.flp_kp_norm / self.kappa
         self.Ki_flap = self.flp_kp_norm / self.kappa / self.flp_tau
+
+        # def calc_stability_floating(self,turbine,controller_params):
+        #     A_2dof = np.array([[0,1,0,0],
+        #                        [0, Ng / Jr * dtau_domega, 0, -Ng/Jr*Ht*dtau_df],
+        #                        [0,0,0,1],
+        #                        [0,Ht/Jp*dF_domega, -Kphi/Jphi*-1/Jphi*(dphi + ht&2*dfa_dv)],
+        #                        ]
+        #     B_2dof = np.array([0,0,0],[B21,B22,B23],[0,0,0],[B41,B42,B43]) 
+        #     C_2dof = np.array([0,1,0,0])
+        #     D_2dof = np.array([0])
+
 
 class ControllerBlocks():
     '''
@@ -1394,3 +1434,29 @@ def multi_sigma(xx,x_bp,y_bp):
 
 def all_same(items):
     return all(x == items[0] for x in items)
+
+def calcmargin(G,K):
+    '''
+    Calculates the stability margin as the H-infinity norm
+    of the sensitivity function
+
+    Parameters:
+    -----------
+    G: list of numpy matrices
+            state space matrices of the plant
+    K: list of numpy matrices
+            state space matrices of the controller
+
+    Returns:
+    --------
+    Sm: float
+       stability margin 
+    '''
+
+    # Testing
+    G_ss = ct.ss(G['A'],G['B'],G['C'],G['D'])
+    K_ss = ct.ss(K['A'],K['B'],K['C'],K['D'])
+    L = G_ss * K_ss
+    S = ct.feedback(np.eye(2),L)
+    sm = ct.system_norm(S,'inf')
+    return sm

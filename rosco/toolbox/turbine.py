@@ -204,6 +204,7 @@ class Turbine():
         self.TipRad             = fast.fst_vt['ElastoDyn']['TipRad']
         self.Rhub               = fast.fst_vt['ElastoDyn']['HubRad']
         self.hubHt              = fast.fst_vt['ElastoDyn']['TowerHt'] + fast.fst_vt['ElastoDyn']['Twr2Shft']
+        self.hubHt_ptfmref      = self.hubHt - fast.fst_vt['ElastoDyn']['PtfmRefzt']        
         self.NumBl              = fast.fst_vt['ElastoDyn']['NumBl']
         self.TowerHt            = fast.fst_vt['ElastoDyn']['TowerHt']
         self.shearExp           = 0.2  #NOTE: HARD CODED 
@@ -240,6 +241,7 @@ class Turbine():
         self.ED_mass          = fast.fst_vt['ElastoDyn']['HubMass'] + fast.fst_vt['ElastoDyn']['NacMass']  + fast.fst_vt['ElastoDyn']['YawBrMass']  + fast.fst_vt['ElastoDyn']['PtfmMass'] 
         # DBS: Add tip-brake mass components?
         self.ED_pitch_inertia = fast.fst_vt['ElastoDyn']['PtfmPIner']
+        # TODO: AG: We should add other inertia of tower, rotor
 
         # Load blade information
         self.load_blade_info()
