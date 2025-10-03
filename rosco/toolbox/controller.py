@@ -258,7 +258,7 @@ class Controller():
         # -------------Load Parameters ------------- #
         # Re-define Turbine Parameters for shorthand
         J = turbine.J                           # Total rotor inertial (kg-m^2) 
-        J_phi = turbine.ED_pitch_inertia        # Total pitch inertia
+        #J_phi = turbine.ED_pitch_inertia        # Total pitch inertia
         rho = turbine.rho                       # Air density (kg/m^3)
         R = turbine.rotor_radius                    # Rotor radius (m)
         Ar = np.pi*R**2                         # Rotor area (m^2)
@@ -346,6 +346,8 @@ class Controller():
         dCp_TSR     = np.empty(len(TSR_op))
         dCt_beta    = np.empty(len(TSR_op))
         dCt_TSR     = np.empty(len(TSR_op))
+        dCq_beta    = np.empty(len(TSR_op))
+        dCq_TSR     = np.empty(len(TSR_op))
         Ct_op       = np.empty(len(TSR_op))
 
         # ------------- Find Linearized State "Matrices" ------------- #
@@ -419,9 +421,9 @@ class Controller():
         dtau_dlambda    = Ng/2*rho*Ar*R*v**2*(1/(TSR_op**2))*(dCp_dTSR*TSR_op - Cp_op)   # (7)
         dtau_domega     = dtau_dlambda*dlambda_domega
         
-        dfa_dbeta      = Ng/2*rho*Ar*R*(1/TSR_op)*dCp_dbeta*v**2  # (26)
-        dfa_dlambda    = Ng/2*rho*Ar*R*v**2*(1/(TSR_op**2))*(dCp_dTSR*TSR_op - Cp_op)   # (7)
-        dfa_domega     = dtau_dlambda*dlambda_domega
+        dfa_dbeta      = 1/2*rho*Ar*R*dCq_dbeta*v**2
+        dfa_dlambda    = 1/2*rho*Ar*R*dCq_dTSR*v**2
+        dfa_domega     = dfa_dlambda*dlambda_domega
 
         Pi_beta         = 1/2 * rho * Ar * v**2 * dCt_dbeta
         Pi_omega        = 1/2 * rho * Ar * R * v * dCt_dTSR
@@ -700,19 +702,43 @@ class Controller():
         #     self.KpTq_float = self.KpTq_float / 2.0
 
         # Calc stability margin
-        dof2model = {}
-        dof2model['A'] = np.array([
-            [0,1,0,0],
-            [0,Ng/J*dtau_domega,0,-Ng/J*hubHt_ptfmref*dtau_dv],
-            [0,0,0,1],
-            [0,hubHt_ptfmref/J_phi * dfa_domega,-K_phi/J_phi,-1/J_phi * (D_phi + hubHt_ptfmref**2*dfa_dv)],
-        ])
-        dof2model['B'] = np.array([
-            [0,1,0,0],
-            [0,Ng/J*dtau_domega,0,-Ng/J*hubHt_ptfmref*dtau_dv],
-            [0,0,0,1],
-            [0,hubHt_ptfmref/J_phi * dfa_domega,-K_phi/J_phi,-1/J_phi * (D_phi + hubHt_ptfmref**2*dfa_dv)],
-        ])
+        margin = []
+        J_phi = 6.0278E10        # Total pitch inertia
+        D_phi = 1.125E9
+        K_phi = 2.2468E9
+
+        for i,v in enumerate(v_above_rated[1:]):
+            dfa_dv = (0.5 * rho * Ar * 1/(TSR_op*v/R)) * (dCp_dTSR*dlambda_dv*v**3 + Cp_op*3*v**2) 
+            
+            dof2model = {}
+            dof2model['A'] = np.array([
+                [0,1,0,0],
+                [0,Ng/J*dtau_domega[i],0,-Ng/J*hubHt_ptfmref*dtau_dv[i]],
+                [0,0,0,1],
+                [0,hubHt_ptfmref/J_phi * dfa_domega[i],-K_phi/J_phi,-1/J_phi * (D_phi + hubHt_ptfmref**2*dfa_dv[i])],
+            ])
+            dof2model['B'] = np.array([
+                [0,0,0],
+                [Ng/J*dtau_dv[i],Ng/J*dtau_dbeta[i],-Ng**2/J],
+                [0,0,0],
+                [hubHt_ptfmref/J_phi*dfa_dv[i], hubHt_ptfmref/J_phi * dfa_dbeta[i],0],
+            ])
+            dof2model['C'] = np.array([[0,1,0,0],
+                                      [0,0,0,1]])
+            dof2model['D'] = 0
+
+
+            K_feedback = {}
+            K_feedback['A'] = []
+            K_feedback['B'] = []
+            K_feedback['C'] = []
+            K_feedback['D'] = np.array([
+                                   [0,0,0,0],
+                                   [self.pc_gain_schedule.Ki[i],self.pc_gain_schedule.Kp[i],0,self.Kp_float[0]],
+                                   [0,0,0,0],
+                                   ])
+            margin = calcmargin(dof2model,K_feedback)
+            pass
 
 
         
