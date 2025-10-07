@@ -16,6 +16,7 @@ import control as ct
 from scipy import interpolate, integrate
 from rosco.toolbox.utilities import list_check
 from scipy import optimize
+import matplotlib.pyplot as plt
 
 # Some useful constants
 now = datetime.datetime.now()
@@ -706,6 +707,7 @@ class Controller():
         J_phi = 6.0278E10        # Total pitch inertia
         D_phi = 1.125E9
         K_phi = 2.2468E9
+        allmargin = []
 
         for i,v in enumerate(v_above_rated[1:]):
             dfa_dv = (0.5 * rho * Ar * 1/(TSR_op*v/R)) * (dCp_dTSR*dlambda_dv*v**3 + Cp_op*3*v**2) 
@@ -723,9 +725,11 @@ class Controller():
                 [0,0,0],
                 [hubHt_ptfmref/J_phi*dfa_dv[i], hubHt_ptfmref/J_phi * dfa_dbeta[i],0],
             ])
-            dof2model['C'] = np.array([[0,1,0,0],
+            dof2model['C'] = np.array([[1,0,0,0],
+                                      [0,1,0,0],
+                                      [0,0,1,0],
                                       [0,0,0,1]])
-            dof2model['D'] = 0
+            dof2model['D'] = np.zeros([4,3])
 
 
             K_feedback = {}
@@ -738,7 +742,11 @@ class Controller():
                                    [0,0,0,0],
                                    ])
             margin = calcmargin(dof2model,K_feedback)
-            pass
+            allmargin.append(margin)
+        plt.figure()
+        plt.plot(v_above_rated[1:],allmargin)
+        plt.savefig('tempdel.png')
+        pass
 
 
         
@@ -1483,6 +1491,6 @@ def calcmargin(G,K):
     G_ss = ct.ss(G['A'],G['B'],G['C'],G['D'])
     K_ss = ct.ss(K['A'],K['B'],K['C'],K['D'])
     L = G_ss * K_ss
-    S = ct.feedback(np.eye(2),L)
+    S = ct.feedback(np.eye(4),L)
     sm = ct.system_norm(S,'inf')
     return sm
