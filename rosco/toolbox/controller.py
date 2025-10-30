@@ -725,30 +725,54 @@ class Controller():
                 [0,0,0],
                 [hubHt_ptfmref/J_phi*dfa_dv[i], hubHt_ptfmref/J_phi * dfa_dbeta[i],0],
             ])
-            dof2model['C'] = np.array([[1,0,0,0],
+            dof2model['C'] = np.array([
                                       [0,1,0,0],
-                                      [0,0,1,0],
                                       [0,0,0,1]])
-            dof2model['D'] = np.zeros([4,3])
+            dof2model['D'] = np.zeros([2,3])
+            dof2model['G'] = ct.ss(dof2model['A'],dof2model['B'],dof2model['C'],dof2model['D'],output=['dthetadot','dphidot'])
+            
+            s = ct.tf('s')
+            K21 = self.pc_gain_schedule.Kp[i] + self.pc_gain_schedule.Ki[i]/s
+            K22 = self.Kp_float[0]
+            K_feedback = ct.tf([[0,0],[K21,K22],[0,0]])
+            # K_feedback = ct.tf(
+            #     [[[[0],[0]]],[[[self.pc_gain_schedule.Kp[i],self.pc_gain_schedule.Kp[i]],[self.Kp_float[0]]]],[[[0],[0]]]], # Num
+            #     [[[[1],[1]]],[[[1,0],[1]]],[[[1],[1]]]], # Den
+            # )
+            #
 
 
-            K_feedback = {}
-            K_feedback['A'] = []
-            K_feedback['B'] = []
-            K_feedback['C'] = []
-            K_feedback['D'] = np.array([
-                                   [0,0,0,0],
-                                   [self.pc_gain_schedule.Ki[i],self.pc_gain_schedule.Kp[i],0,self.Kp_float[0]],
-                                   [0,0,0,0],
-                                   ])
-            margin = calcmargin(dof2model,K_feedback)
-            allmargin.append(margin)
+
+                # [[0,1], [0,1]],
+                # [[kk]]
+                # [[self.pc_gain_schedule.Kp[i],self.pc_gain_schedule.Kp[i],[1,0]] , [self.Kp_float[0],1]],
+                # [0,1], [0,1]]) 
+                #
+            L = dof2model['G'] * K_feedback
+            S = ct.feedback(np.eye(2),L)
+            sm = ct.system_norm(S,'inf')
+            allmargin.append(sm)
+
+
+            # K_feedback = {}
+            # K_feedback['A'] = []
+            # K_feedback['B'] = []
+            # K_feedback['C'] = []
+            # K_feedback['D'] = np.array([
+            #                        [0,0,0,0],
+            #                        [self.pc_gain_schedule.Ki[i],self.pc_gain_schedule.Kp[i],0,self.Kp_float[0]],
+            #                        [0,0,0,0],
+            #                        ])
+            # margin = calcmargin(dof2model,K_feedback)
+            # allmargin.append(margin)
         plt.figure()
         plt.plot(v_above_rated[1:],allmargin)
         plt.savefig('tempdel.png')
+        f = plt.figure()
+        # ct.bode_plot(dof2model['G'])
+        ct.bode_plot(K_feedback)
+        f.savefig('bode.png')
         pass
-
-
         
         # Flap actuation 
         if self.Flp_Mode >= 1:
