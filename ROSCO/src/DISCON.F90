@@ -119,7 +119,7 @@ IF (((LocalVar%iStatus >= 0) .OR. (LocalVar%iStatus <= -8)) .AND. (ErrVar%aviFAI
     IF (CntrPar%Y_ControlMode > 0 .AND. CntrPar%Y_ControlMode < 3) THEN
         CALL YawRateControl(avrSWAP, CntrPar, LocalVar, objInst, zmqVar, DebugVar, ErrVar)
     ELSEIF (CntrPar%Y_ControlMode == 3) THEN
-        CALL YawSpeedRegulation(avrSWAP, CntrPar, LocalVar, objInst, DebugVar, ErrVar)
+        CALL YawSpeedRegulation(avrSWAP, CntrPar, LocalVar, objInst, zmqVar, DebugVar, ErrVar)
     END IF
     
     IF (CntrPar%Flp_Mode > 0) THEN

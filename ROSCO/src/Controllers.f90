@@ -220,20 +220,22 @@ CONTAINS
     END SUBROUTINE VariableSpeedControl
 
 !-------------------------------------------------------------------------------------------------------------------------------
-    SUBROUTINE YawSpeedRegulation(avrSWAP, CntrPar, LocalVar, objInst, DebugVar, ErrVar)
+    SUBROUTINE YawSpeedRegulation(avrSWAP, CntrPar, LocalVar, objInst, zmqVar, DebugVar, ErrVar)
         ! Yaw rate controller
         !       Y_ControlMode = 0, 1, YawRateControl No yaw control
         !       Y_ControlMode = 2, this YawSpeedRegulation routine
 
-        USE ROSCO_Types, ONLY : ControlParameters, LocalVariables, ObjectInstances, DebugVariables, ErrorVariables, MovingAvgParameters
+        USE ROSCO_Types, ONLY : ControlParameters, LocalVariables, ObjectInstances, DebugVariables, ErrorVariables, MovingAvgParameters, ZMQ_Variables
     
         REAL(C_FLOAT), INTENT(INOUT) :: avrSWAP(*) ! The swap array, used to pass data to, and receive data from, the DLL controller.
     
         TYPE(ControlParameters), INTENT(INOUT)    :: CntrPar
+        REAL(DbKi), SAVE :: NacVaneOffset                          ! For offset control
         TYPE(LocalVariables), INTENT(INOUT)       :: LocalVar
         TYPE(ObjectInstances), INTENT(INOUT)      :: objInst
         TYPE(DebugVariables), INTENT(INOUT)       :: DebugVar
         TYPE(ErrorVariables), INTENT(INOUT)       :: ErrVar
+        TYPE(ZMQ_Variables), INTENT(INOUT)  :: zmqVar
 
         TYPE(MovingAvgParameters), SAVE           :: MA_Vane
 
@@ -249,9 +251,11 @@ CONTAINS
             LocalVar%Yaw_Seek = 0_IntKi
             LocalVar%Yaw_SeekTimer = 0_IntKi
         ENDIF
-
+        
+        ! Get nacelle offset from zmq
+        NacVaneOffset = zmqVar%Yaw_Offset
         ! Filter wind vane signal with moving average filter, parameters and shift register stored in MA_Vane
-        LocalVar%NacVaneF = MovingAvgFilter(LocalVar%NacVane,LocalVar%DT,CntrPar%MA_VaneWindow, MA_Vane, LocalVar%iStatus, .FALSE.)
+        LocalVar%NacVaneF = MovingAvgFilter(LocalVar%NacVane,LocalVar%DT,CntrPar%MA_VaneWindow, MA_Vane, LocalVar%iStatus, .FALSE.) + NacVaneOffset
         
         ! Start regulation trigger, if not already yawing out
         IF ((LocalVar%GenSpeedF > (CntrPar%Yaw_RegStartSpeed / RPS2RPM) ) .AND. (LocalVar%Yaw_Out == 0) ) THEN
