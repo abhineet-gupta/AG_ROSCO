@@ -4,15 +4,16 @@ channels:
 
 dependencies:
   - matplotlib
-  - numpy
+  - numpy==1.26.4
   - pytest
   - scipy
   - pyYAML
   - pandas
-  - wisdem
+  - wisdem==3.15.3
   - cmake
   - pyparsing==2.4.7 
   - control
   - pyzmq
   - mpi4py
   - treon
+  - marmot-agents==0.2.5
