@@ -228,6 +228,7 @@ CONTAINS
         USE ROSCO_Types, ONLY : ControlParameters, LocalVariables, ObjectInstances, DebugVariables, ErrorVariables, MovingAvgParameters
     
         REAL(C_FLOAT), INTENT(INOUT) :: avrSWAP(*) ! The swap array, used to pass data to, and receive data from, the DLL controller.
+        REAL(DbKi) :: NacVaneOffset                          ! For offset control
     
         TYPE(ControlParameters), INTENT(INOUT)    :: CntrPar
         TYPE(LocalVariables), INTENT(INOUT)       :: LocalVar
@@ -251,7 +252,14 @@ CONTAINS
         ENDIF
 
         ! Filter wind vane signal with moving average filter, parameters and shift register stored in MA_Vane
-        LocalVar%NacVaneF = MovingAvgFilter(LocalVar%NacVane,LocalVar%DT,CntrPar%MA_VaneWindow, MA_Vane, LocalVar%iStatus, .FALSE.)
+
+        ! Add error
+        IF (LocalVar%Time >= CntrPar%Error_startime) THEN    ! Time > Error time
+            NacVaneOffset = LocalVar%NacVane + CntrPar%Error_WindVane
+        ELSE
+            NacVaneOffset = LocalVar%NacVane
+        ENDIF
+        LocalVar%NacVaneF = MovingAvgFilter(NacVaneOffset,LocalVar%DT,CntrPar%MA_VaneWindow, MA_Vane, LocalVar%iStatus, .FALSE.)
         
         ! Start regulation trigger, if not already yawing out
         IF ((LocalVar%GenSpeedF > (CntrPar%Yaw_RegStartSpeed / RPS2RPM) ) .AND. (LocalVar%Yaw_Out == 0) ) THEN

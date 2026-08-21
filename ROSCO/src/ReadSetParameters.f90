@@ -264,6 +264,12 @@ CONTAINS
         CALL ParseInput(UnControllerParameters,CurLine,'Fault_BrakeTq',accINFILE(1),CntrPar%Fault_BrakeTq,ErrVar)
         CALL ReadEmptyLine(UnControllerParameters,CurLine)
 
+        !------- FAULT OPTIONS ----------------------------------------------
+        CALL ReadEmptyLine(UnControllerParameters,CurLine)
+        CALL ParseInput(UnControllerParameters,CurLine,'Error_startime',accINFILE(1),CntrPar%Error_startime,ErrVar)
+        CALL ParseInput(UnControllerParameters,CurLine,'Error_WindVane',accINFILE(1),CntrPar%Error_WindVane,ErrVar)
+        CALL ReadEmptyLine(UnControllerParameters,CurLine)
+
         !------- DUMP OPTIONS ----------------------------------------------
         CALL ReadEmptyLine(UnControllerParameters,CurLine)
         CALL ParseInput(UnControllerParameters,CurLine,'Dump_StartSpeed',accINFILE(1),CntrPar%Dump_StartSpeed,ErrVar)

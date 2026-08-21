@@ -39,6 +39,8 @@ TYPE, PUBLIC :: ControlParameters
     REAL(DbKi)                    :: Fault_YawSpeed              ! Yaw speed to yaw to Fault_Yaw
     REAL(DbKi)                    :: Fault_BrakeTime             ! Wait this long to engage brakes
     REAL(DbKi)                    :: Fault_BrakeTq               ! Brake torque applied after yaw out
+    REAL(DbKi)                    :: Error_startime              ! Time at which error occurs
+    REAL(DbKi)                    :: Error_WindVane              ! Wind vane error
     REAL(DbKi)                    :: Dump_StartSpeed             ! Speed to start dump regulation (rpm)
     REAL(DbKi)                    :: Dump_Window                 ! Dump torque increases from 0 to 100% of Dump_MaxTq from Dump_StartSpeed to Dump_StartSpeed + Dump_Window (rpm)
     REAL(DbKi)                    :: Dump_MaxTq                  ! Maximum dump torque (Nm)

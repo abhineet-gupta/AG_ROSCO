@@ -162,6 +162,14 @@ ControlParameters:
     Fault_BrakeTq:
       <<: *real
       description: Brake torque applied after yaw out
+   
+    # Manually incuded error
+    Error_startime:
+      <<: *real
+      description: Time at which error occurs
+    Error_WindVane:
+      <<: *real
+      description: Wind vane error
 
     # Dump regulator settings
     Dump_StartSpeed:
